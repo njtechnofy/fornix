@@ -12,6 +12,7 @@ import { OrderModel, orderSchema } from "./Order";
 import { PrincipalModel, principalSchema } from "./Principal";
 import { ProductModel, productSchema } from "./Product";
 import { ProductOrderModel, productOrderSchema } from "./ProductOrder";
+import { TaskModel, taskSchema } from "./Task";
 // import { TaskModel, taskSchema } from "./Task";
 
 export const modelClasses = [
@@ -26,12 +27,14 @@ export const modelClasses = [
   AreaModel,
   PrincipalModel,
   CustomerPrincipalModel,
+  TaskModel,
 ];
 
 export const schema = appSchema({
   version: 1,
   tables: [
     agentSchema,
+    taskSchema,
     customerSchema,
     orderSchema,
     productOrderSchema,

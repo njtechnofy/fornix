@@ -13,11 +13,11 @@ import { Loading } from "./loading/Loading";
 export const useShowAllCustomers = () => {
   const mapRef = useMapStore((state) => state.ref);
 
-  return (customers: CustomerModel[]) =>
+  return (customers: CustomerModel[]) => {
     mapRef.current?.fitToCoordinates(
       customers.map((c) => ({
-        latitude: c.latitude,
-        longitude: c.longitude,
+        latitude: c!.latitude,
+        longitude: c!.longitude,
       })),
       {
         animated: true,
@@ -29,6 +29,7 @@ export const useShowAllCustomers = () => {
         },
       }
     );
+  };
 };
 export function CustomerList({
   cs,

@@ -144,7 +144,7 @@ export const Point: FunctionComponent<PointProps> = memo(
 );
 
 export default function Map() {
-  const { customers } = useCustomers({});
+  const { customers } = useCustomers({ hasGeo: true });
 
   return (
     <CustomSuspense
@@ -164,7 +164,7 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
     return {
       height: position.value,
       style: {
-        top: 0,
+        top: 80,
       },
     };
   });
@@ -193,14 +193,14 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
           type: "Feature" as const,
           geometry: {
             type: "Point" as const,
-            coordinates: [longitude, latitude],
+            coordinates: [longitude as number, latitude as number],
           },
           properties: {
             id,
             name,
             allPaid,
             allDelivered,
-            radius,
+            radius: radius as number,
           },
         })
       ),
@@ -246,11 +246,13 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
           500
         );
       } else if (point.properties?.id) {
-        router.push(`/(app)/_customers/${point.properties.id}`);
+        router.push(`/dashboard`);
       }
     },
     [mapRef]
   );
+
+  console.log(region, "map");
 
   return useMemo(
     () => (
@@ -264,12 +266,13 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
             maxZoomLevel={18}
             provider={PROVIDER_GOOGLE}
             style={{
-              height,
+              top: 200,
+              height: height - 200,
               width,
             }}
             initialRegion={region}
             showsUserLocation={true}
-            showsMyLocationButton={false}
+            showsMyLocationButton={true}
             followsUserLocation={true}
             customMapStyle={customMapStyle}
             onMapReady={() => {

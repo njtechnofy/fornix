@@ -168,16 +168,6 @@ export const toggleSearchSheet = (searchSheet: boolean) => {
     closeSheet();
   }
 };
-export const toggleMoreSheet = (moreSheet: boolean) => {
-  if (moreSheet) {
-    useSheetStore.setState({
-      type: "more",
-    });
-    useSheetStore.getState().ref.current?.snapToIndex(0);
-  } else {
-    closeSheet();
-  }
-};
 
 export const useInitialCalendarStore = create<{
   calendar: ReturnType<typeof getDaysOfPreviousMonths> | undefined;

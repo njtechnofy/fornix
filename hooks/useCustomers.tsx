@@ -12,6 +12,7 @@ export type CustomerSelector = {
   or?: boolean;
   countOnly?: boolean;
   ignoreFilter?: boolean;
+  hasGeo?: boolean;
 };
 
 export function useCustomers({
@@ -20,6 +21,7 @@ export function useCustomers({
   or,
   countOnly,
   ignoreFilter = false,
+  hasGeo = false,
 }: CustomerSelector) {
   const database = useDatabase();
   const [customers, setCustomers] = useState<CustomerModel[] | undefined>();
@@ -30,6 +32,17 @@ export function useCustomers({
   let customersQuery = database.collections
     .get<CustomerModel>(COLLECTIONS.CUSTOMERS)
     .query();
+
+  if (hasGeo) {
+    customersQuery = customersQuery.extend(
+      Q.and(
+        Q.where("latitude", Q.notEq(null)),
+        Q.where("longitude", Q.notEq(null)),
+        Q.where("radius", Q.notEq(null))
+      )
+    );
+  }
+
   if (area.id !== "all" && !ignoreFilter) {
     customersQuery = customersQuery.extend(
       Q.where("area_id", area.id),

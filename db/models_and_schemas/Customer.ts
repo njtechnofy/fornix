@@ -11,12 +11,17 @@ import {
 import { COLLECTIONS, nameWithDateSchemaColumns } from "../db_utils";
 import { AreaModel } from "./Area";
 import { OrderModel } from "./Order";
+import { TaskModel } from "./Task";
 
 export class CustomerModel extends Model {
   static table = COLLECTIONS.CUSTOMERS;
 
   static associations: Associations = {
     [COLLECTIONS.ORDERS]: {
+      type: "has_many",
+      foreignKey: "customer_id",
+    },
+    [COLLECTIONS.TASKS]: {
       type: "has_many",
       foreignKey: "customer_id",
     },
@@ -34,6 +39,8 @@ export class CustomerModel extends Model {
 
   @children(COLLECTIONS.ORDERS) orders?: Query<OrderModel>;
 
+  @children(COLLECTIONS.TASKS) tasks?: Query<TaskModel>;
+
   @lazy
   principals = this.collections
     .get(COLLECTIONS.PRINCIPAL)
@@ -45,11 +52,13 @@ export class CustomerModel extends Model {
 
   @field("all_delivered") allDelivered!: boolean;
 
-  @field("latitude") latitude!: number;
+  @field("latitude") latitude?: number;
 
-  @field("longitude") longitude!: number;
+  @field("longitude") longitude?: number;
 
-  @field("radius") radius!: number;
+  @field("radius") radius?: number;
+
+  @field("picture") picture?: string;
 
   @field("mobile_number") mobileNumber!: string;
 
@@ -86,9 +95,10 @@ export const customerSchema = tableSchema({
   name: COLLECTIONS.CUSTOMERS,
   columns: [
     { name: "area_id", type: "string", isIndexed: true },
-    { name: "latitude", type: "number" },
-    { name: "longitude", type: "number" },
-    { name: "radius", type: "number" },
+    { name: "latitude", type: "number", isOptional: true },
+    { name: "longitude", type: "number", isOptional: true },
+    { name: "radius", type: "number", isOptional: true },
+    { name: "picture", type: "string", isOptional: true },
     { name: "mobile_number", type: "string" },
     { name: "all_paid", type: "boolean" },
     { name: "all_delivered", type: "boolean" },

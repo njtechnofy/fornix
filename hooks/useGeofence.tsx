@@ -35,7 +35,7 @@ export const isInRegion = ({ userCoords, regionCoords }: Geofence) => {
 };
 
 export const useGeofence = () => {
-  const { customers } = useCustomers({});
+  const { customers } = useCustomers({ hasGeo: true });
   const userCoords = useLocationStore((state) => state.coords);
 
   const _customers = useMemo(

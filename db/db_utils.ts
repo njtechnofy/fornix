@@ -11,6 +11,7 @@ export const enum COLLECTIONS {
   GREATER_AREAS = "greater_areas",
   AREAS = "areas",
   CUSTOMER_PRINCIPALS = "customer_principals",
+  TASKS = "tasks",
 }
 
 export const dateSchemaColumns = [

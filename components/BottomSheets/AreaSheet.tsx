@@ -1,4 +1,5 @@
 import { AreaType, selectArea, useAreaStore } from "@/hooks/useArea";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { Check } from "@tamagui/lucide-icons";
 import { H6, View, XStack, YStack } from "tamagui";

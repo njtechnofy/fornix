@@ -77,9 +77,6 @@ export default function RootLayout() {
             timeInterval: 2000,
           },
           (loc) => {
-            console.log(loc);
-            //pass to global store
-
             updateLocation(loc);
           }
         );

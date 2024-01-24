@@ -105,22 +105,26 @@ export async function seed(
         areas.flatMap((a, index) =>
           Array.from(Array(customerPerArea).keys()).map((k) =>
             Customers.create((c) => {
+              const isGeotagged =
+                index === 0 && k === 0 ? true : Math.random() > 0.5;
               c.name =
                 index === 0 && k === 0
                   ? "Nabua's People Mart"
                   : `RC:${faker.company.name()}`;
-              c.latitude =
-                index === 0 && k === 0
-                  ? 13.40905
-                  : 13.40905 + Math.random() * 0.06 * plusOrMinus();
-              c.longitude =
-                index === 0 && k === 0
-                  ? 123.3731
-                  : 123.3731 + Math.random() * 0.06 * plusOrMinus();
+              if (isGeotagged) {
+                c.latitude =
+                  index === 0 && k === 0
+                    ? 13.40905
+                    : 13.40905 + Math.random() * 0.06 * plusOrMinus();
+                c.longitude =
+                  index === 0 && k === 0
+                    ? 123.3731
+                    : 123.3731 + Math.random() * 0.06 * plusOrMinus();
+                c.radius = 100;
+              }
               c.area.id = c.id;
-              c.radius = 100;
-              c.area.id = a.id;
               c.mobileNumber = faker.phone.number();
+              c.area.id = a.id;
               c.allPaid = Math.random() > 0.5;
               c.allDelivered = Math.random() > 0.5;
             })

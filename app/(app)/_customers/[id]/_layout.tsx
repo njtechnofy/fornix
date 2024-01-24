@@ -3,7 +3,8 @@ import { COLLECTIONS } from "@/db/db_utils";
 import { CustomerModel } from "@/db/models_and_schemas/Customer";
 import { OrderModel } from "@/db/models_and_schemas/Order";
 import { useDatabase } from "@nozbe/watermelondb/react";
-
+//@ts-ignore
+import imageSrc from "@/assets/images/stock.jpg";
 import { Phone } from "@tamagui/lucide-icons";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
@@ -57,11 +58,7 @@ export default function Customer() {
   return (
     <YStack flex={1}>
       <XStack width="100%" height="30%">
-        <Image
-          source={require("../../../assets/images/stock.jpg")}
-          height="20"
-          width="100%"
-        />
+        <Image source={imageSrc} height="20" width="100%" />
       </XStack>
       <YStack
         position="absolute"
