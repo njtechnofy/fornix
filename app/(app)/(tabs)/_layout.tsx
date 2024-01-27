@@ -4,6 +4,7 @@ import { Redirect, Tabs, useRouter } from "expo-router";
 import { AreaSheet } from "@/components/BottomSheets/AreaSheet";
 import { GeofenceSheet } from "@/components/BottomSheets/GeofenceSheet";
 import { SearchSheet } from "@/components/BottomSheets/SearchSheet";
+import { Loading } from "@/components/loading/Loading";
 import { toggleAreaSheet, useAreaStore } from "@/hooks/useArea";
 import { useGeofence } from "@/hooks/useGeofence";
 import {
@@ -26,14 +27,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useDeferredValue, useMemo } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  Button,
-  SizableText,
-  Spinner,
-  XStack,
-  YStack,
-  useTheme,
-} from "tamagui";
+import { Button, SizableText, XStack, YStack, useTheme } from "tamagui";
 
 export const CustomHeader = (props: any) => {
   const insets = useSafeAreaInsets();
@@ -254,7 +248,7 @@ const BottomSheetContainer = () => {
         backgroundColor: theme.background.val,
       }}
     >
-      <YStack flex={1}>{deferredOpen ? <InsideSheet /> : <Spinner />}</YStack>
+      <YStack flex={1}>{deferredOpen ? <InsideSheet /> : <Loading />}</YStack>
     </BottomSheet>
   );
 };

@@ -1,3 +1,4 @@
+import { getCalendarWorklet } from "@/utils/worklets/getCalendarWorklet";
 import { FlashList } from "@shopify/flash-list";
 import { ChevronLeft, ChevronRight } from "@tamagui/lucide-icons";
 import {
@@ -8,35 +9,11 @@ import {
   getYear,
   isEqual,
 } from "date-fns";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, Pressable } from "react-native";
+import { RefObject, createRef } from "react";
+import { Worklets } from "react-native-worklets-core";
 import { Button, H3, SizableText, XStack, YStack } from "tamagui";
 import { create } from "zustand";
-
-export const useHorizontalCalendarStore = create<{
-  month: number;
-  year: number;
-  isScrolling: boolean;
-  highlight: {
-    year: number;
-    month: number;
-    day: number;
-  };
-}>(() => {
-  const today = new Date();
-  const year = getYear(today);
-  const month = getMonth(today);
-  return {
-    isScrolling: true,
-    year,
-    month,
-    highlight: {
-      year,
-      month,
-      day: getDate(today),
-    },
-  };
-});
+const DATE_SIZE = 64;
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
@@ -55,49 +32,45 @@ const months = [
   "December",
 ] as const;
 
-type DateType = {
+type CalendarDay = [year: number, month: number, date: number, day: string];
+
+export const useHorizontalCalendarStore = create<{
   month: number;
-  days: {
-    year: number;
-    month: number;
-    name: (typeof daysOfWeek)[number];
-    number: number;
-  }[];
   year: number;
-};
-function getItem(date: Date) {
-  const year = getYear(date);
-  const month = getMonth(date);
-  const day = getDay(date);
+  // isScrolling: boolean;
+  initialScroll: number;
+  highlight: CalendarDay;
+  calendarDays: CalendarDay[];
+  ref: RefObject<FlashList<CalendarDay[]>>;
+}>(() => {
+  const ref = createRef<FlashList<CalendarDay[]>>();
+  const today = new Date();
+  const date = getDate(today);
+  const day = daysOfWeek[getDay(today)];
+  const year = getYear(today);
+  const month = getMonth(today);
+  const calendarDays = getCalendar(today);
+  const initialScroll = date;
+
   return {
-    key: `${year}-${month}-${day}`,
+    // isScrolling: true,
+    ref,
+    year,
+    month,
+    highlight: [year, month, date, day],
+    initialScroll,
+    calendarDays,
   };
-}
-function getCalendar(date: Date) {
-  const numberOfDays = getDaysInMonth(date);
-  const year = getYear(date);
-  const month = getMonth(date);
+});
 
-  const days: DateType["days"] = [];
-  for (let i = 1; i <= numberOfDays; i++) {
-    days.push({
-      name: daysOfWeek[getDay(new Date(year, month, i))],
-      year,
-      month,
-      number: i,
-    });
-  }
+type DateTuple = [number, number, number];
 
-  return days;
-}
-
-const _width = Dimensions.get("screen").width;
-
-const DateWidget = ({ item }: { item: DateType["days"][number] }) => {
+const DateWidget = ({ item }: { item: CalendarDay }) => {
   const highlight = useHorizontalCalendarStore((state) => state.highlight);
+
   const isHighlighted = isEqual(
-    new Date(item.year, item.month, item.number),
-    new Date(highlight.year, highlight.month, highlight.day)
+    new Date(...(item.slice(0, -1) as DateTuple)),
+    new Date(...(highlight.slice(0, -1) as DateTuple))
   );
   return (
     <XStack
@@ -111,69 +84,67 @@ const DateWidget = ({ item }: { item: DateType["days"][number] }) => {
       })}
     >
       <H3 fontWeight="$16" color={isHighlighted ? "white" : "$gray12"}>
-        {item.number}
+        {item[2]}
       </H3>
     </XStack>
   );
 };
 
+const renderDay = ({ item }: { item: CalendarDay }) => {
+  return (
+    <YStack
+      onPress={() => {
+        useHorizontalCalendarStore.setState({
+          highlight: item,
+        });
+      }}
+      paddingVertical="$2"
+      width={DATE_SIZE}
+      space="$1"
+      justifyContent="center"
+      alignItems="center"
+      marginHorizontal="$1"
+    >
+      <SizableText color="$gray9" size="$1">
+        {item[3]}
+      </SizableText>
+      <DateWidget item={item} />
+    </YStack>
+  );
+};
+const computeCalendar = Worklets.createRunInContextFn(getCalendarWorklet);
+const handleCalendarChange = (isPrev: boolean) => {
+  const { year, month } = useHorizontalCalendarStore.getState();
+  const isEdgeMonth = isPrev ? 0 : 11;
+  const operator = isPrev ? -1 : 1;
+  const newMonthWhenEdge = isPrev ? 11 : 0;
+  const compareMonth = isEdgeMonth === month;
+
+  const newYear = compareMonth ? year + operator : year;
+  const newMonth = compareMonth ? newMonthWhenEdge : month + operator;
+
+  useHorizontalCalendarStore.setState({
+    year: newYear,
+    month: newMonth,
+  });
+
+  computeCalendar(newYear, newMonth).then((calendarDays) => {
+    useHorizontalCalendarStore.setState({
+      calendarDays: JSON.parse(calendarDays),
+    });
+  });
+};
+
 export function HorizontalCalendar() {
-  const today = new Date();
-  const initialOffset = getDate(today);
   const month = useHorizontalCalendarStore((state) => state.month);
   const year = useHorizontalCalendarStore((state) => state.year);
-  const ref = useRef<FlashList<DateType["days"]>>(null);
-  const initialCalendar = useMemo(() => {
-    return getCalendar(today);
-  }, []);
-
-  const [calendar, setCalendar] = useState(initialCalendar);
-
-  useEffect(() => {
-    if (year !== calendar[1].year || month !== calendar[1].month) {
-      setCalendar(getCalendar(new Date(year, month, 15)));
-    }
-  }, [month, year]);
-
-  // useEffect(() => {
-  //   setCalendar((prev) => {
-  //     // const newRes = prev
-  //     prev.calendar[`${prev.highlighted}`].isHighlighted = false;
-  //     prev.calendar[`${highlight.day}`].isHighlighted = true;
-  //     prev.highlighted = `${highlight.day}`;
-  //     return { ...prev };
-  //   });
-  // }, [highlight]);
-
-  const renderDay = ({ item }: { item: DateType["days"][number] }) => {
-    return (
-      <Pressable
-        onPress={() => {
-          useHorizontalCalendarStore.setState({
-            highlight: {
-              year: item.year,
-              month: item.month,
-              day: item.number,
-            },
-          });
-        }}
-      >
-        <YStack
-          paddingVertical="$2"
-          width={64}
-          space="$1"
-          justifyContent="center"
-          alignItems="center"
-          marginHorizontal="$1"
-        >
-          <SizableText color="$gray9" size="$1">
-            {item.name}
-          </SizableText>
-          <DateWidget item={item} />
-        </YStack>
-      </Pressable>
-    );
-  };
+  const calendarDays = useHorizontalCalendarStore(
+    (state) => state.calendarDays
+  );
+  const ref = useHorizontalCalendarStore((state) => state.ref);
+  const initialScroll = useHorizontalCalendarStore(
+    (state) => state.initialScroll
+  );
 
   return (
     <XStack elevation="$0.25">
@@ -188,10 +159,7 @@ export function HorizontalCalendar() {
             <Button
               variant="outlined"
               onPress={() => {
-                useHorizontalCalendarStore.setState({
-                  year: month === 0 ? year - 1 : year,
-                  month: month === 0 ? 11 : month - 1,
-                });
+                handleCalendarChange(true);
               }}
             >
               <ChevronLeft />
@@ -202,10 +170,7 @@ export function HorizontalCalendar() {
             <Button
               variant="outlined"
               onPress={() => {
-                useHorizontalCalendarStore.setState({
-                  year: month === 11 ? year + 1 : year,
-                  month: month === 11 ? 0 : month + 1,
-                });
+                handleCalendarChange(false);
               }}
             >
               <ChevronRight />
@@ -220,18 +185,31 @@ export function HorizontalCalendar() {
               setTimeout(() => {
                 ref.current?.scrollToIndex({
                   animated: true,
-                  index: initialOffset - 4,
+                  index: initialScroll - 4,
                 });
               }, 100);
             }}
-            estimatedItemSize={70}
+            estimatedItemSize={DATE_SIZE}
             horizontal
-            data={calendar}
-            keyExtractor={(i) => `${i.year}-${i.month}-${i.number}`}
+            data={calendarDays}
+            keyExtractor={(i) => `${i}`}
             renderItem={renderDay}
           />
         </YStack>
       </YStack>
     </XStack>
   );
+}
+
+function getCalendar(date: Date) {
+  const numberOfDays = getDaysInMonth(date);
+  const year = getYear(date);
+  const month = getMonth(date);
+
+  const days: CalendarDay[] = [];
+  for (let i = 1; i <= numberOfDays; i++) {
+    days.push([year, month, i, daysOfWeek[getDay(new Date(year, month, i))]]);
+  }
+
+  return days;
 }

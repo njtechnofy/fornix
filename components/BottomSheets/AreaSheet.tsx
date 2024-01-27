@@ -1,8 +1,11 @@
 import { AreaType, selectArea, useAreaStore } from "@/hooks/useArea";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { Check } from "@tamagui/lucide-icons";
 import { H6, View, XStack, YStack } from "tamagui";
 import { CustomSuspense } from "../loading/CustomSuspense";
+
+const ITEM_SIZE = 80;
 
 export function AreaSheet() {
   const areas = useAreaStore((state) => state.areas);
@@ -14,8 +17,9 @@ export function AreaSheet() {
           onPress={() => {
             selectArea(item);
           }}
+          height={ITEM_SIZE}
+          paddingHorizontal="$4"
           backgroundColor="$green9"
-          padding="$4"
           marginVertical="$2"
           borderRadius={20}
           borderWidth="$1"
@@ -43,8 +47,9 @@ export function AreaSheet() {
         onPress={() => {
           selectArea(item);
         }}
+        height={ITEM_SIZE}
         backgroundColor="$backgroundStrong"
-        padding="$4"
+        paddingHorizontal="$4"
         marginVertical="$2"
         borderRadius={20}
         borderWidth="$1"
@@ -79,7 +84,7 @@ export function AreaSheet() {
             data={a}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
-            estimatedItemSize={100}
+            estimatedItemSize={ITEM_SIZE}
             //@ts-ignore
             renderScrollComponent={BottomSheetScrollView}
           />

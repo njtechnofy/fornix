@@ -13,7 +13,7 @@ type filters = {
   delivered?: boolean;
   offset?: number;
   limit?: number;
-  date?: boolean;
+  date?: Date;
   customerId?: string;
 };
 
@@ -37,12 +37,10 @@ export const useOrders = ({
   }
 
   if (typeof date !== "undefined") {
-    const hDay = new Date(highlight.year, highlight.month, highlight.day);
-
     query = query.extend(
       Q.and(
-        Q.where("created_at", Q.gte(startOfDay(hDay).getTime())),
-        Q.where("created_at", Q.lte(endOfDay(hDay).getTime()))
+        Q.where("created_at", Q.gte(startOfDay(date).getTime())),
+        Q.where("created_at", Q.lte(endOfDay(date).getTime()))
       )
     );
   }

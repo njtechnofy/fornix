@@ -61,12 +61,9 @@ const renderItem = ({ item }: { item: InvoiceModel }) => (
 );
 
 export default function Invoices() {
-  const { year, month, day } = useHorizontalCalendarStore(
-    (state) => state.highlight
-  );
-
+  const highlight = useHorizontalCalendarStore((state) => state.highlight);
   const { invoices } = useInvoices({
-    date: true,
+    date: new Date(...(highlight.slice(0, -1) as [number, number, number])),
   });
 
   if (!invoices) {

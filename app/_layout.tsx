@@ -73,8 +73,8 @@ export default function RootLayout() {
         const locationWatcher = await watchPositionAsync(
           {
             accuracy: LocationAccuracy.High,
-            distanceInterval: 0,
-            timeInterval: 2000,
+            distanceInterval: 0.1,
+            timeInterval: 10000,
           },
           (loc) => {
             console.log(loc);

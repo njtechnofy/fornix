@@ -1,4 +1,3 @@
-import { useHorizontalCalendarStore } from "@/components/HorizontalCalendar";
 import { COLLECTIONS } from "@/db/db_utils";
 import { InvoiceModel } from "@/db/models_and_schemas/Invoice";
 import { OrderModel } from "@/db/models_and_schemas/Order";
@@ -12,7 +11,7 @@ import { Subscription } from "rxjs";
 type filters = {
   offset?: number;
   limit?: number;
-  date?: boolean;
+  date?: Date;
   orderId?: string;
 };
 
@@ -22,15 +21,12 @@ export const useInvoices = ({ orderId, offset, limit, date }: filters) => {
   const database = useDatabase();
   let query = database.get<InvoiceModel>(COLLECTIONS.INVOICES).query();
   const baseQuery = query;
-  const highlight = useHorizontalCalendarStore((state) => state.highlight);
 
   if (typeof date !== "undefined") {
-    const hDay = new Date(highlight.year, highlight.month, highlight.day);
-
     query = query.extend(
       Q.and(
-        Q.where("created_at", Q.gte(startOfDay(hDay).getTime())),
-        Q.where("created_at", Q.lte(endOfDay(hDay).getTime()))
+        Q.where("created_at", Q.gte(startOfDay(date).getTime())),
+        Q.where("created_at", Q.lte(endOfDay(date).getTime()))
       )
     );
   }
@@ -49,7 +45,6 @@ export const useInvoices = ({ orderId, offset, limit, date }: filters) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("subscribing invoices");
       const sub1 = query.observe().subscribe(setInvoices);
       const sub2 = baseQuery.observeCount().subscribe(setCount);
 
@@ -57,7 +52,7 @@ export const useInvoices = ({ orderId, offset, limit, date }: filters) => {
         sub1.unsubscribe();
         sub2.unsubscribe();
       };
-    }, [database, highlight])
+    }, [database, date, orderId, offset, limit])
   );
   return {
     invoices,

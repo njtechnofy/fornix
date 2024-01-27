@@ -5,8 +5,9 @@ import { OrderModel } from "@/db/models_and_schemas/Order";
 import { useOrders } from "@/hooks/useOrders";
 import { FlashList } from "@shopify/flash-list";
 import { Link } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text, XStack, YStack } from "tamagui";
+
+const ORDER_WIDGET_HEIGHT = 90;
 
 // const horizontalDays = ({
 //   item,
@@ -42,7 +43,8 @@ import { Text, XStack, YStack } from "tamagui";
 const renderItem = ({ item }: { item: OrderModel }) => (
   <Link asChild href={`/(app)/_orders/${item.id}`}>
     <XStack
-      padding="$4"
+      height={ORDER_WIDGET_HEIGHT}
+      paddingHorizontal="$4"
       borderRadius={20}
       marginVertical="$2"
       backgroundColor="$backgroundStrong"
@@ -60,14 +62,11 @@ const renderItem = ({ item }: { item: OrderModel }) => (
 );
 
 export default function Orders() {
-  const { year, month, day } = useHorizontalCalendarStore(
-    (state) => state.highlight
-  );
+  const highlight = useHorizontalCalendarStore((state) => state.highlight);
 
   const { orders } = useOrders({
-    date: true,
+    date: new Date(...(highlight.slice(0, -1) as [number, number, number])),
   });
-  const insets = useSafeAreaInsets();
 
   if (!orders) {
     return <Loading />;
@@ -83,7 +82,7 @@ export default function Orders() {
           data={orders}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          estimatedItemSize={120}
+          estimatedItemSize={ORDER_WIDGET_HEIGHT}
         />
       </YStack>
     </YStack>
