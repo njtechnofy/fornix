@@ -9,9 +9,9 @@ import {
   getYear,
   isEqual,
 } from "date-fns";
-import { RefObject, createRef } from "react";
+import { RefObject, createRef, memo, useCallback } from "react";
 import { Worklets } from "react-native-worklets-core";
-import { Button, H3, SizableText, XStack, YStack } from "tamagui";
+import { Button, H3, ScrollView, SizableText, XStack, YStack } from "tamagui";
 import { create } from "zustand";
 const DATE_SIZE = 64;
 
@@ -128,7 +128,7 @@ const handleCalendarChange = (isPrev: boolean) => {
     month: newMonth,
   });
 
-  computeCalendar(newYear, newMonth).then((calendarDays) => {
+  computeCalendar(newYear, newMonth).then((calendarDays: any) => {
     useHorizontalCalendarStore.setState({
       calendarDays: JSON.parse(calendarDays),
     });
@@ -141,20 +141,59 @@ export function HorizontalCalendar() {
   const calendarDays = useHorizontalCalendarStore(
     (state) => state.calendarDays
   );
-  const ref = useHorizontalCalendarStore((state) => state.ref);
-  const initialScroll = useHorizontalCalendarStore(
-    (state) => state.initialScroll
-  );
+  const highlight = useHorizontalCalendarStore((state) => state.highlight);
+  const dayHighlight =
+    highlight[0] === year && highlight[1] === month ? highlight[2] : undefined;
+
+  const selectHighlight = useCallback((_highlight: CalendarDay) => {
+    useHorizontalCalendarStore.setState({
+      highlight: _highlight,
+    });
+  }, []);
+
+  const CalendarWidget = memo(({ item }: { item: CalendarDay }) => {
+    const isHighlighted = item[2] === dayHighlight;
+    return (
+      <YStack
+        key={JSON.stringify(item)}
+        onPress={() => selectHighlight(item)}
+        paddingVertical="$2"
+        width={DATE_SIZE}
+        space="$1"
+        justifyContent="center"
+        alignItems="center"
+        marginHorizontal="$1"
+      >
+        <SizableText color="$gray9" size="$1">
+          {item[3]}
+        </SizableText>
+        <XStack
+          paddingVertical="$2"
+          paddingHorizontal="$3"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius={10}
+          {...(isHighlighted && {
+            backgroundColor: "$green10",
+          })}
+        >
+          <H3 fontWeight="$16" color={isHighlighted ? "white" : "$gray12"}>
+            {item[2]}
+          </H3>
+        </XStack>
+      </YStack>
+    );
+  });
 
   return (
     <XStack elevation="$0.25">
-      <YStack>
+      <YStack width="100%">
         <YStack width="100%">
           <XStack
-            justifyContent="space-between"
             alignItems="center"
             space="$2"
             paddingHorizontal="$2"
+            width="100%"
           >
             <Button
               variant="outlined"
@@ -164,9 +203,19 @@ export function HorizontalCalendar() {
             >
               <ChevronLeft />
             </Button>
-            <H3 color="$gray12" fontWeight="$1">
-              {months[month]} {year}
-            </H3>
+            <XStack
+              space="$2"
+              flex={1}
+              justifyContent="center"
+              alignItems="center"
+            >
+              <H3 color="$gray12" fontWeight="$16">
+                {months[month]}
+              </H3>
+              <H3 color="$gray12" fontWeight="$1">
+                {year}
+              </H3>
+            </XStack>
             <Button
               variant="outlined"
               onPress={() => {
@@ -177,7 +226,13 @@ export function HorizontalCalendar() {
             </Button>
           </XStack>
 
-          <FlashList
+          <ScrollView width="100%" horizontal>
+            {calendarDays.map((item) => (
+              <CalendarWidget key={`${item}`} item={item} />
+            ))}
+          </ScrollView>
+
+          {/* <FlashList
             //@ts-ignore
             // key={new Date(year, month, 1).toString()}
             ref={ref}
@@ -185,7 +240,7 @@ export function HorizontalCalendar() {
               setTimeout(() => {
                 ref.current?.scrollToIndex({
                   animated: true,
-                  index: initialScroll - 4,
+                  index: initialScroll - 1,
                 });
               }, 100);
             }}
@@ -194,7 +249,7 @@ export function HorizontalCalendar() {
             data={calendarDays}
             keyExtractor={(i) => `${i}`}
             renderItem={renderDay}
-          />
+          /> */}
         </YStack>
       </YStack>
     </XStack>

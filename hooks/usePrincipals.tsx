@@ -9,7 +9,7 @@ export function usePrincipals() {
   const [principals, setPrincipals] = useState<PrincipalModel[] | undefined>();
 
   let productsQuery = database.collections
-    .get<PrincipalModel>(COLLECTIONS.PRINCIPAL)
+    .get<PrincipalModel>(COLLECTIONS.PRINCIPALS)
     .query();
 
   useFocusEffect(

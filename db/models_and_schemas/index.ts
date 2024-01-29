@@ -12,20 +12,35 @@ import { OrderModel, orderSchema } from "./Order";
 import { PrincipalModel, principalSchema } from "./Principal";
 import { ProductModel, productSchema } from "./Product";
 import { ProductOrderModel, productOrderSchema } from "./ProductOrder";
+import { TaskModel, taskSchema } from "./Tasks";
 // import { TaskModel, taskSchema } from "./Task";
 
+export const MODELS_HASH = {
+  agents: AgentModel,
+  customers: CustomerModel,
+  products: ProductModel,
+  orders: OrderModel,
+  product_orders: ProductOrderModel,
+  invoices: InvoiceModel,
+  prinicipals: PrincipalModel,
+  greater_areas: GreaterAreaModel,
+  areas: AreaModel,
+  customer_principals: CustomerPrincipalModel,
+  tasks: TaskModel,
+};
+
 export const modelClasses = [
+  GreaterAreaModel,
   AgentModel,
   CustomerModel,
+  PrincipalModel,
+  CustomerPrincipalModel,
   ProductModel,
   OrderModel,
   ProductOrderModel,
   InvoiceModel,
-  PrincipalModel,
-  GreaterAreaModel,
   AreaModel,
-  PrincipalModel,
-  CustomerPrincipalModel,
+  TaskModel,
 ];
 
 export const schema = appSchema({
@@ -41,5 +56,6 @@ export const schema = appSchema({
     areaSchema,
     greaterAreaSchema,
     customerPrincipalSchema,
+    taskSchema,
   ],
 });

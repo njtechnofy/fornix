@@ -11,7 +11,7 @@ import { COLLECTIONS, nameWithDateSchemaColumns } from "../db_utils";
 import { ProductModel } from "./Product";
 
 export class PrincipalModel extends Model {
-  static table = COLLECTIONS.PRINCIPAL;
+  static table = COLLECTIONS.PRINCIPALS;
 
   static associations: Associations = {
     [COLLECTIONS.PRODUCTS]: {
@@ -64,7 +64,7 @@ export class PrincipalModel extends Model {
 }
 
 export const principalSchema = tableSchema({
-  name: COLLECTIONS.PRINCIPAL,
+  name: COLLECTIONS.PRINCIPALS,
   columns: [
     ...nameWithDateSchemaColumns,
     {

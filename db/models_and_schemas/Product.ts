@@ -18,12 +18,12 @@ export class ProductModel extends Model {
       type: "has_many",
       foreignKey: "product_id",
     },
-    [COLLECTIONS.PRINCIPAL]: {
+    [COLLECTIONS.PRINCIPALS]: {
       type: "belongs_to",
       key: "principal_id",
     },
   };
-  @immutableRelation(COLLECTIONS.PRINCIPAL, "principal_id")
+  @immutableRelation(COLLECTIONS.PRINCIPALS, "principal_id")
   principal!: Relation<PrincipalModel>;
   @field("name") name!: string;
   @field("code") code!: string;

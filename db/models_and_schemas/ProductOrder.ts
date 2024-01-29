@@ -14,11 +14,11 @@ export class ProductOrderModel extends Model {
   static table = COLLECTIONS.PRODUCT_ORDERS;
 
   static associations: Associations = {
-    orders: {
+    [COLLECTIONS.ORDERS]: {
       type: "belongs_to",
       key: "order_id",
     },
-    products: {
+    [COLLECTIONS.PRODUCTS]: {
       type: "belongs_to",
       key: "product_id",
     },

@@ -28,6 +28,10 @@ export class CustomerModel extends Model {
       type: "has_many",
       foreignKey: "customer_id",
     },
+    [COLLECTIONS.TASKS]: {
+      type: "has_many",
+      foreignKey: "customer_id",
+    },
   };
 
   @immutableRelation(COLLECTIONS.AREAS, "area_id") area!: Relation<AreaModel>;
@@ -36,7 +40,7 @@ export class CustomerModel extends Model {
 
   @lazy
   principals = this.collections
-    .get(COLLECTIONS.PRINCIPAL)
+    .get(COLLECTIONS.PRINCIPALS)
     .query(Q.on(COLLECTIONS.CUSTOMER_PRINCIPALS, "customer_id", this.id));
 
   @field("name") name!: string;

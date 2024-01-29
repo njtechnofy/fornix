@@ -20,7 +20,7 @@ export function useProducts({
 
   if (principalID) {
     productsQuery = productsQuery.extend(
-      Q.on(COLLECTIONS.PRINCIPAL, "principal_id", principalID),
+      Q.on(COLLECTIONS.PRINCIPALS, "principal_id", principalID),
       Q.sortBy("updated_at", "desc")
     );
   }

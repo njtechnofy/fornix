@@ -60,7 +60,7 @@ export async function seed(
   const GreaterAreas = database.get<GreaterAreaModel>(
     COLLECTIONS.GREATER_AREAS
   );
-  const Principals = database.get<PrincipalModel>(COLLECTIONS.PRINCIPAL);
+  const Principals = database.get<PrincipalModel>(COLLECTIONS.PRINCIPALS);
   const CustomerPrincipals = database.get<CustomerPrincipalModel>(
     COLLECTIONS.CUSTOMER_PRINCIPALS
   );

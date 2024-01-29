@@ -1,6 +1,6 @@
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
-export function getCalendarWorklet(_year: number, _month: number) {
+export function getCalendarWorklet(year: number, month: number) {
   "worklet";
 
   function toDate(argument: any) {
@@ -27,49 +27,28 @@ export function getCalendarWorklet(_year: number, _month: number) {
     }
   }
 
-  function constructFrom(date: any, value: any) {
-    if (date instanceof Date) {
-      //@ts-ignore
-      return new date.constructor(value);
-    } else {
-      return new Date(value);
-    }
-  }
-
   function getDay(date: any) {
     const _date = toDate(date);
     const day = _date.getDay();
     return day;
   }
 
-  function getMonth(date: any) {
-    const _date = toDate(date);
-    const month = _date.getMonth();
-    return month;
+  function isLeapYear(year: number): boolean {
+    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
   }
 
-  function getYear(date: any) {
-    return toDate(date).getFullYear();
-  }
+  const daysInMonth = {
+    standard: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+    leapyear: [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+  };
 
-  function getDaysInMonth(date: any) {
-    const _date = toDate(date);
-    const year = _date.getFullYear();
-    const monthIndex = _date.getMonth();
-    const lastDayOfMonth = constructFrom(date, 0);
-    lastDayOfMonth.setFullYear(year, monthIndex + 1, 0);
-    lastDayOfMonth.setHours(0, 0, 0, 0);
-    return lastDayOfMonth.getDate();
-  }
-
-  const date = new Date(_year, _month);
-  const numberOfDays = getDaysInMonth(date);
-  const year = getYear(date);
-  const month = getMonth(date);
+  const numberOfDays =
+    daysInMonth[isLeapYear(year) ? "leapyear" : "standard"][month];
 
   const days = [];
+  const initialDay = getDay(new Date(year, month, 1));
   for (let i = 1; i <= numberOfDays; i++) {
-    days.push([year, month, i, daysOfWeek[getDay(new Date(year, month, i))]]);
+    days.push([year, month, i, daysOfWeek[(i - 1 + initialDay) % 7]]);
   }
 
   return JSON.stringify(days);
