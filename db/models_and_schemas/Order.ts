@@ -5,7 +5,6 @@ import {
   field,
   immutableRelation,
   lazy,
-  readonly,
 } from "@nozbe/watermelondb/decorators";
 import { COLLECTIONS, dateSchemaColumns } from "../db_utils";
 import { CustomerModel } from "./Customer";
@@ -50,7 +49,7 @@ export class OrderModel extends Model {
   @date("created_at")
   createdAt!: number;
 
-  @readonly
+  // @readonly reinstate this on prod
   @date("updated_at")
   updatedAt!: number;
 }

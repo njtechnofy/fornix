@@ -86,7 +86,7 @@ function Stat({
       onPress={() => {
         if (filter !== "") {
           console.log("stat pressed");
-          router.push(`/(app)/(tabs)/tasks/${filter}`);
+          router.push(`/`);
         }
       }}
     >

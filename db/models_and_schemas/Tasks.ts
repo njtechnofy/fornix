@@ -12,7 +12,7 @@ import { CustomerModel } from "./Customer";
 export class TaskModel extends Model {
   static table = COLLECTIONS.TASKS;
   static associations: Associations = {
-    customers: {
+    [COLLECTIONS.CUSTOMERS]: {
       type: "belongs_to",
       key: "customer_id",
     },
@@ -39,10 +39,10 @@ export class TaskModel extends Model {
 export const taskSchema = tableSchema({
   name: COLLECTIONS.TASKS,
   columns: [
+    { name: "customer_id", type: "string" },
     { name: "task_name", type: "string" },
     { name: "expected_at", type: "number" },
     { name: "resolved_at", type: "number", isOptional: true },
-
     ...dateSchemaColumns,
   ],
 });

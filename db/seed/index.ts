@@ -6,13 +6,14 @@ import { COLLECTIONS } from "../db_utils";
 import { AgentModel } from "../models_and_schemas/Agent";
 import { AreaModel } from "../models_and_schemas/Area";
 import { CustomerModel } from "../models_and_schemas/Customer";
-import { CustomerPrincipalModel } from "../models_and_schemas/CustomerPrinicpal";
+import { CustomerPrincipalModel } from "../models_and_schemas/CustomerPrincipal";
 import { GreaterAreaModel } from "../models_and_schemas/GreaterArea";
 import { InvoiceModel } from "../models_and_schemas/Invoice";
 import { OrderModel } from "../models_and_schemas/Order";
 import { PrincipalModel } from "../models_and_schemas/Principal";
 import { ProductModel } from "../models_and_schemas/Product";
 import { ProductOrderModel } from "../models_and_schemas/ProductOrder";
+import { TaskModel } from "../models_and_schemas/Tasks";
 
 const defaultSeed = {
   customer: {
@@ -60,6 +61,7 @@ export async function seed(
   const GreaterAreas = database.get<GreaterAreaModel>(
     COLLECTIONS.GREATER_AREAS
   );
+  const Tasks = database.get<TaskModel>(COLLECTIONS.TASKS);
   const Principals = database.get<PrincipalModel>(COLLECTIONS.PRINCIPALS);
   const CustomerPrincipals = database.get<CustomerPrincipalModel>(
     COLLECTIONS.CUSTOMER_PRINCIPALS
@@ -70,15 +72,16 @@ export async function seed(
 
   try {
     await database.write(async () => {
+      const tasksToCreate: Promise<TaskModel>[] = [];
       await Agents.create((a) => {
         a.name = "Nhiel Jeff Salvana";
         a.email = "njsalvana@gmail.com";
         a.mobile = "09568191325";
       });
-
+      console.log("finished seeding agent");
       const greaterAreas = await Promise.all(
         Array.from(Array(greaterAreaCount).keys()).map((k) =>
-          GreaterAreas.prepareCreate((g) => {
+          GreaterAreas.create((g) => {
             g.name =
               k === 0
                 ? defaultSeed.greaterArea.name
@@ -87,6 +90,7 @@ export async function seed(
         )
       );
 
+      console.log("finished seeding greater areas");
       const areas = await Promise.all(
         greaterAreas.flatMap((ga, index) =>
           Array.from(Array(areaCountPerGreaterArea).keys()).map((k) =>
@@ -101,6 +105,7 @@ export async function seed(
         )
       );
 
+      console.log("finished seeding areas");
       const customers = await Promise.all(
         areas.flatMap((a, index) =>
           Array.from(Array(customerPerArea).keys()).map((k) =>
@@ -109,14 +114,18 @@ export async function seed(
                 index === 0 && k === 0
                   ? "Nabua's People Mart"
                   : `RC:${faker.company.name()}`;
-              c.latitude =
-                index === 0 && k === 0
-                  ? 13.40905
-                  : 13.40905 + Math.random() * 0.06 * plusOrMinus();
-              c.longitude =
-                index === 0 && k === 0
-                  ? 123.3731
-                  : 123.3731 + Math.random() * 0.06 * plusOrMinus();
+
+              if (Math.random() > 0.5) {
+                c.latitude =
+                  index === 0 && k === 0
+                    ? 13.40905
+                    : 13.40905 + Math.random() * 0.06 * plusOrMinus();
+                c.longitude =
+                  index === 0 && k === 0
+                    ? 123.3731
+                    : 123.3731 + Math.random() * 0.06 * plusOrMinus();
+              }
+
               c.area.id = c.id;
               c.radius = 100;
               c.area.id = a.id;
@@ -127,6 +136,7 @@ export async function seed(
           )
         )
       );
+      console.log("finished seeding customers");
 
       const principals = await Promise.all(
         Array.from(Array(principalCount).keys()).map((k) =>
@@ -141,6 +151,7 @@ export async function seed(
           })
         )
       );
+      console.log("finished seeding principals");
 
       const products = await Promise.all(
         principals.flatMap((pr, index) =>
@@ -166,8 +177,10 @@ export async function seed(
           )
         )
       );
+      console.log("finished seeding products");
 
       const ordersPromises: Promise<OrderModel>[] = [];
+
       const customerPrincipalPromises: Promise<CustomerPrincipalModel>[] = [];
       const productOrderPromises: Promise<ProductOrderModel>[] = [];
       const orderInvoicePromises: Promise<InvoiceModel>[] = [];
@@ -175,6 +188,21 @@ export async function seed(
 
       //iterate customers
       customers.forEach((customer) => {
+        if (!customer.latitude || !customer.longitude) {
+          tasksToCreate.push(
+            Tasks.create((t) => {
+              t.taskName = "tag";
+              t.customer.id = customer.id;
+              t.createdAt = customer.createdAt;
+              t.expectedAt = faker.date
+                .soon({
+                  days: Math.floor(Math.random() * 5 + 1),
+                  refDate: new Date(),
+                })
+                .getTime();
+            })
+          );
+        }
         principals.forEach((pr) => {
           customerPrincipalPromises.push(
             CustomerPrincipals.create((cp) => {
@@ -190,10 +218,12 @@ export async function seed(
             days: Math.floor(Math.random() * 20 + 10),
             refDate: new Date(),
           });
+          const createdTime = createDate.getTime();
 
           ordersPromises.push(
             Orders.create((o) => {
-              o.createdAt = createDate.getTime();
+              o.createdAt = createdTime;
+              o.updatedAt = createdTime;
               o.customer.id = customer.id;
               o.paid = customer.allPaid ? true : Math.random() > 0.5;
               o.customerName = customer.name;
@@ -217,7 +247,12 @@ export async function seed(
         }
       });
 
+      console.log(tasksToCreate);
+      console.log("finished iteration of customers");
+
       const orders = await Promise.all(ordersPromises);
+
+      console.log("finished seeding orders");
 
       for (const order of orders) {
         const numberOfProducts = Math.floor(Math.random() * 10) + 3;
@@ -258,47 +293,70 @@ export async function seed(
             let partial = (Math.random() * balance) / 2;
             let paidAmount = partial < total_price / 5 ? balance : partial;
 
+            let invoiceCreationTime = faker.date
+              .soon({
+                days: Math.floor(Math.random() * 5 + 1),
+                refDate: new Date(order.createdAt),
+              })
+              .getTime();
+
             orderInvoicePromises.push(
               Invoices.create((i) => {
                 i.customerName = order.customerName;
-                i.createdAt = faker.date
+                i.createdAt = invoiceCreationTime;
+                i.updatedAt = invoiceCreationTime;
+                i.order.id = order.id;
+                i.paidAmount = paidAmount;
+              })
+            );
+
+            balance = balance - paidAmount;
+          }
+        } else {
+          tasksToCreate.push(
+            Tasks.create((t) => {
+              t.taskName = "collect";
+              t.customer.id = order.customer.id;
+              t.createdAt = order.createdAt;
+              t.expectedAt = faker.date
+                .soon({
+                  days: Math.floor(Math.random() * 5 + 1),
+                  refDate: order.createdAt,
+                })
+                .getTime();
+            })
+          );
+          if (Math.random() > 0.5) {
+            orderInvoicePromises.push(
+              Invoices.create((i) => {
+                const createdTime = faker.date
                   .soon({
                     days: Math.floor(Math.random() * 5 + 1),
                     refDate: new Date(order.createdAt),
                   })
                   .getTime();
+                i.customerName = order.customerName;
+                i.createdAt = createdTime;
+                i.updatedAt = createdTime;
                 i.order.id = order.id;
-                i.paidAmount = paidAmount;
+                i.paidAmount = (Math.random() * total_price) / 2;
               })
             );
-            balance = balance - paidAmount;
           }
-        } else if (Math.random() > 0.5) {
-          orderInvoicePromises.push(
-            Invoices.create((i) => {
-              i.customerName = order.customerName;
-              i.createdAt = faker.date
-                .soon({
-                  days: Math.floor(Math.random() * 5 + 1),
-                  refDate: new Date(order.createdAt),
-                })
-                .getTime();
-              i.order.id = order.id;
-              i.paidAmount = (Math.random() * total_price) / 2;
-            })
-          );
         }
       }
 
       await Promise.all(
         [
-          orderUpdatePromises,
           customerPrincipalPromises,
           productOrderPromises,
           orderInvoicePromises,
           orderUpdatePromises,
         ].flat()
       );
+      console.log("finished seeding invoices and product orders");
+
+      await Promise.all(tasksToCreate);
     });
     console.log("made it here!");
     await updateCustomerColumns();
@@ -355,9 +413,8 @@ export async function updateCustomerColumns() {
       `)
   ).unsafeFetchRaw();
   try {
-    console.log("writing updates", res.length, res);
     await database.write(async () => {
-      const c_promises: Promise<CustomerModel>[] = [];
+      const c_promises: CustomerModel[] = [];
       const updateableIds: string[] = [];
       const newAllPaid: string[] = [];
       const newAllDelivered: string[] = [];
@@ -373,16 +430,16 @@ export async function updateCustomerColumns() {
       const customers = await Customers.query(
         Q.where("id", Q.oneOf(updateableIds))
       );
-      console.log("new paid?", newAllPaid);
+
       for (const updatable of customers) {
         c_promises.push(
-          updatable.update((u) => {
+          updatable.prepareUpdate((u) => {
             u.allPaid = newAllPaid.includes(u.id);
             u.allDelivered = newAllDelivered.includes(u.id);
           })
         );
       }
-      await Promise.all(c_promises);
+      await database.batch(c_promises);
       console.log("done updating yes!");
     });
   } catch (e) {

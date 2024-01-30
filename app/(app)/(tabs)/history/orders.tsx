@@ -1,5 +1,3 @@
-//@ts-ignore image type
-import { useHorizontalCalendarStore } from "@/components/HorizontalCalendar";
 import { Loading } from "@/components/loading/Loading";
 import { OrderModel } from "@/db/models_and_schemas/Order";
 import { useOrders } from "@/hooks/useOrders";
@@ -62,11 +60,7 @@ const renderItem = ({ item }: { item: OrderModel }) => (
 );
 
 export default function Orders() {
-  const highlight = useHorizontalCalendarStore((state) => state.highlight);
-
-  const { orders } = useOrders({
-    date: new Date(...(highlight.slice(0, -1) as [number, number, number])),
-  });
+  const { orders } = useOrders({});
 
   if (!orders) {
     return <Loading />;

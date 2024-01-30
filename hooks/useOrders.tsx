@@ -1,4 +1,3 @@
-import { useHorizontalCalendarStore } from "@/components/HorizontalCalendar";
 import { COLLECTIONS } from "@/db/db_utils";
 import { OrderModel } from "@/db/models_and_schemas/Order";
 import { Q } from "@nozbe/watermelondb";
@@ -26,7 +25,7 @@ export const useOrders = ({
   customerId,
 }: filters) => {
   const [orders, setOrders] = useState<OrderModel[]>();
-  const highlight = useHorizontalCalendarStore((state) => state.highlight);
+
   const [totalCount, setCount] = useState<number>();
   const database = useDatabase();
   let query = database.get<OrderModel>(COLLECTIONS.ORDERS).query();
@@ -76,7 +75,7 @@ export const useOrders = ({
         sub1.unsubscribe();
         sub2.unsubscribe();
       };
-    }, [database, highlight])
+    }, [database])
   );
   return {
     orders,

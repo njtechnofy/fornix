@@ -1,6 +1,7 @@
 import { COLLECTIONS } from "@/db/db_utils";
 import { InvoiceModel } from "@/db/models_and_schemas/Invoice";
 import { OrderModel } from "@/db/models_and_schemas/Order";
+import { useHorizontalCalendarStore } from "@/store/useHorizontalDateStore";
 import { Q } from "@nozbe/watermelondb";
 import { useDatabase } from "@nozbe/watermelondb/hooks";
 import { endOfDay, startOfDay } from "date-fns";
@@ -11,22 +12,31 @@ import { Subscription } from "rxjs";
 type filters = {
   offset?: number;
   limit?: number;
-  date?: Date;
   orderId?: string;
+  date?: boolean;
 };
 
-export const useInvoices = ({ orderId, offset, limit, date }: filters) => {
+export const useInvoices = ({
+  orderId,
+  offset,
+  limit,
+  date = false,
+}: filters) => {
   const [invoices, setInvoices] = useState<InvoiceModel[]>();
   const [totalCount, setCount] = useState<number>();
+  const highlight = useHorizontalCalendarStore((state) => state.highlight);
   const database = useDatabase();
   let query = database.get<InvoiceModel>(COLLECTIONS.INVOICES).query();
   const baseQuery = query;
 
-  if (typeof date !== "undefined") {
+  if (date) {
+    const _date = new Date(
+      ...(highlight.slice(0, -1) as [number, number, number])
+    );
     query = query.extend(
       Q.and(
-        Q.where("created_at", Q.gte(startOfDay(date).getTime())),
-        Q.where("created_at", Q.lte(endOfDay(date).getTime()))
+        Q.where("created_at", Q.gte(startOfDay(_date).getTime())),
+        Q.where("created_at", Q.lte(endOfDay(_date).getTime()))
       )
     );
   }
@@ -52,8 +62,9 @@ export const useInvoices = ({ orderId, offset, limit, date }: filters) => {
         sub1.unsubscribe();
         sub2.unsubscribe();
       };
-    }, [database, date, orderId, offset, limit])
+    }, [highlight])
   );
+
   return {
     invoices,
     totalCount,

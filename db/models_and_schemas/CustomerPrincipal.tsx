@@ -16,13 +16,13 @@ export class CustomerPrincipalModel extends Model {
       type: "belongs_to",
       key: "customer_id",
     },
-    [COLLECTIONS.PRINCIPAL]: {
+    [COLLECTIONS.PRINCIPALS]: {
       type: "belongs_to",
       key: "principal_id",
     },
   };
 
-  @immutableRelation(COLLECTIONS.PRINCIPAL, "principal_id")
+  @immutableRelation(COLLECTIONS.PRINCIPALS, "principal_id")
   principal!: Relation<PrincipalModel>;
   @immutableRelation(COLLECTIONS.ORDERS, "customer_id")
   customer!: Relation<CustomerModel>;

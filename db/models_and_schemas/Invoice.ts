@@ -1,11 +1,6 @@
 import { Model, Relation, tableSchema } from "@nozbe/watermelondb";
 import { Associations } from "@nozbe/watermelondb/Model";
-import {
-  date,
-  field,
-  immutableRelation,
-  readonly,
-} from "@nozbe/watermelondb/decorators";
+import { date, field, immutableRelation } from "@nozbe/watermelondb/decorators";
 import { COLLECTIONS, dateSchemaColumns } from "../db_utils";
 import { OrderModel } from "./Order";
 
@@ -29,7 +24,7 @@ export class InvoiceModel extends Model {
   @date("created_at")
   createdAt!: number;
 
-  @readonly
+  // @readonly reinstate this on prod
   @date("updated_at")
   updatedAt!: number;
 }
@@ -37,7 +32,6 @@ export class InvoiceModel extends Model {
 export const invoiceSchema = tableSchema({
   name: COLLECTIONS.INVOICES,
   columns: [
-    ...dateSchemaColumns,
     {
       name: "order_id",
       type: "string",
@@ -45,5 +39,6 @@ export const invoiceSchema = tableSchema({
     },
     { name: "customer_name", type: "string" },
     { name: "paid_amount", type: "number" },
+    ...dateSchemaColumns,
   ],
 });

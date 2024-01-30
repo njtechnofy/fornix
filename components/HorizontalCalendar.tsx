@@ -1,68 +1,15 @@
-import { getCalendarWorklet } from "@/utils/worklets/getCalendarWorklet";
+import {
+  months,
+  useHorizontalCalendarStore,
+} from "@/store/useHorizontalDateStore";
+import { computeCalendar } from "@/utils/worklets/getCalendarWorklet";
 import { FlashList } from "@shopify/flash-list";
 import { ChevronLeft, ChevronRight } from "@tamagui/lucide-icons";
-import {
-  getDate,
-  getDay,
-  getDaysInMonth,
-  getMonth,
-  getYear,
-  isEqual,
-} from "date-fns";
-import { RefObject, createRef } from "react";
-import { Worklets } from "react-native-worklets-core";
+import { isEqual } from "date-fns";
 import { Button, H3, SizableText, XStack, YStack } from "tamagui";
-import { create } from "zustand";
 const DATE_SIZE = 64;
 
-const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-] as const;
-
 type CalendarDay = [year: number, month: number, date: number, day: string];
-
-export const useHorizontalCalendarStore = create<{
-  month: number;
-  year: number;
-  // isScrolling: boolean;
-  initialScroll: number;
-  highlight: CalendarDay;
-  calendarDays: CalendarDay[];
-  ref: RefObject<FlashList<CalendarDay[]>>;
-}>(() => {
-  const ref = createRef<FlashList<CalendarDay[]>>();
-  const today = new Date();
-  const date = getDate(today);
-  const day = daysOfWeek[getDay(today)];
-  const year = getYear(today);
-  const month = getMonth(today);
-  const calendarDays = getCalendar(today);
-  const initialScroll = date;
-
-  return {
-    // isScrolling: true,
-    ref,
-    year,
-    month,
-    highlight: [year, month, date, day],
-    initialScroll,
-    calendarDays,
-  };
-});
-
 type DateTuple = [number, number, number];
 
 const DateWidget = ({ item }: { item: CalendarDay }) => {
@@ -112,7 +59,7 @@ const renderDay = ({ item }: { item: CalendarDay }) => {
     </YStack>
   );
 };
-const computeCalendar = Worklets.createRunInContextFn(getCalendarWorklet);
+
 const handleCalendarChange = (isPrev: boolean) => {
   const { year, month } = useHorizontalCalendarStore.getState();
   const isEdgeMonth = isPrev ? 0 : 11;
@@ -129,7 +76,6 @@ const handleCalendarChange = (isPrev: boolean) => {
   });
 
   computeCalendar(newYear, newMonth).then((calendarDays: any) => {
-    console.log(calendarDays);
     useHorizontalCalendarStore.setState({
       calendarDays: JSON.parse(calendarDays),
     });
@@ -212,15 +158,15 @@ export function HorizontalCalendar() {
   );
 }
 
-function getCalendar(date: Date) {
-  const numberOfDays = getDaysInMonth(date);
-  const year = getYear(date);
-  const month = getMonth(date);
+// function getCalendar(date: Date) {
+//   const numberOfDays = getDaysInMonth(date);
+//   const year = getYear(date);
+//   const month = getMonth(date);
 
-  const days: CalendarDay[] = [];
-  for (let i = 1; i <= numberOfDays; i++) {
-    days.push([year, month, i, daysOfWeek[getDay(new Date(year, month, i))]]);
-  }
+//   const days: CalendarDay[] = [];
+//   for (let i = 1; i <= numberOfDays; i++) {
+//     days.push([year, month, i, daysOfWeek[getDay(new Date(year, month, i))]]);
+//   }
 
-  return days;
-}
+//   return days;
+// }

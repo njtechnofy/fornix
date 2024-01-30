@@ -11,6 +11,7 @@ import {
 import { COLLECTIONS, nameWithDateSchemaColumns } from "../db_utils";
 import { AreaModel } from "./Area";
 import { OrderModel } from "./Order";
+import { TaskModel } from "./Tasks";
 
 export class CustomerModel extends Model {
   static table = COLLECTIONS.CUSTOMERS;
@@ -36,6 +37,7 @@ export class CustomerModel extends Model {
 
   @immutableRelation(COLLECTIONS.AREAS, "area_id") area!: Relation<AreaModel>;
 
+  @children(COLLECTIONS.TASKS) tasks?: Query<TaskModel>;
   @children(COLLECTIONS.ORDERS) orders?: Query<OrderModel>;
 
   @lazy
@@ -49,9 +51,9 @@ export class CustomerModel extends Model {
 
   @field("all_delivered") allDelivered!: boolean;
 
-  @field("latitude") latitude!: number;
+  @field("latitude") latitude?: number;
 
-  @field("longitude") longitude!: number;
+  @field("longitude") longitude?: number;
 
   @field("radius") radius!: number;
 
@@ -90,8 +92,8 @@ export const customerSchema = tableSchema({
   name: COLLECTIONS.CUSTOMERS,
   columns: [
     { name: "area_id", type: "string", isIndexed: true },
-    { name: "latitude", type: "number" },
-    { name: "longitude", type: "number" },
+    { name: "latitude", type: "number", isOptional: true },
+    { name: "longitude", type: "number", isOptional: true },
     { name: "radius", type: "number" },
     { name: "mobile_number", type: "string" },
     { name: "all_paid", type: "boolean" },

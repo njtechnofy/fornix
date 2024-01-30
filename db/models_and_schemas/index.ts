@@ -5,7 +5,7 @@ import { CustomerModel, customerSchema } from "./Customer";
 import {
   CustomerPrincipalModel,
   customerPrincipalSchema,
-} from "./CustomerPrinicpal";
+} from "./CustomerPrincipal";
 import { GreaterAreaModel, greaterAreaSchema } from "./GreaterArea";
 import { InvoiceModel, invoiceSchema } from "./Invoice";
 import { OrderModel, orderSchema } from "./Order";
@@ -22,7 +22,7 @@ export const MODELS_HASH = {
   orders: OrderModel,
   product_orders: ProductOrderModel,
   invoices: InvoiceModel,
-  prinicipals: PrincipalModel,
+  principals: PrincipalModel,
   greater_areas: GreaterAreaModel,
   areas: AreaModel,
   customer_principals: CustomerPrincipalModel,

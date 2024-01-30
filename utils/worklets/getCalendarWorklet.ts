@@ -1,6 +1,6 @@
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
-
-export function getCalendarWorklet(year: number, month: number) {
+import { Worklets } from "react-native-worklets-core";
+function getCalendarWorklet(year: number, month: number) {
   "worklet";
 
   function toDate(argument: any) {
@@ -53,3 +53,6 @@ export function getCalendarWorklet(year: number, month: number) {
 
   return JSON.stringify(days);
 }
+
+export const computeCalendar =
+  Worklets.createRunInContextFn(getCalendarWorklet);

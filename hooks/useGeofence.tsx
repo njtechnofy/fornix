@@ -35,13 +35,17 @@ export const isInRegion = ({ userCoords, regionCoords }: Geofence) => {
 };
 
 export const useGeofence = () => {
-  const { customers } = useCustomers({});
+  const { customers } = useCustomers({ geoTagged: true });
   const userCoords = useLocationStore((state) => state.coords);
 
   const _customers = useMemo(
     () =>
       customers?.filter((customer) =>
-        isInRegion({ userCoords, regionCoords: customer })
+        isInRegion({
+          userCoords,
+          //@ts-ignore
+          regionCoords: customer,
+        })
       ),
     [userCoords.latitude, userCoords.longitude, customers]
   );

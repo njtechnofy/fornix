@@ -29,7 +29,9 @@ export default function InvoiceData() {
         <Paragraph marginBottom="$1" color="$gray10">
           {item.id}
         </Paragraph>
-        <Paragraph>{new Date(item.createdAt).toLocaleDateString()}</Paragraph>
+        <Paragraph>
+          {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}
+        </Paragraph>
         <Paragraph alignSelf="flex-end">
           {moneyFormatter.format(item.paidAmount ?? 0)}
         </Paragraph>

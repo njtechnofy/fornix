@@ -1,5 +1,3 @@
-//@ts-ignore image type
-import { useHorizontalCalendarStore } from "@/components/HorizontalCalendar";
 import { Loading } from "@/components/loading/Loading";
 import { InvoiceModel } from "@/db/models_and_schemas/Invoice";
 import { useInvoices } from "@/hooks/useInvoices";
@@ -61,10 +59,7 @@ const renderItem = ({ item }: { item: InvoiceModel }) => (
 );
 
 export default function Invoices() {
-  const highlight = useHorizontalCalendarStore((state) => state.highlight);
-  const { invoices } = useInvoices({
-    date: new Date(...(highlight.slice(0, -1) as [number, number, number])),
-  });
+  const { invoices } = useInvoices({ date: true });
 
   if (!invoices) {
     return <Loading />;
