@@ -40,14 +40,13 @@ export function SearchSheet({
   return (
     <YStack height="100%">
       <XStack
-        space="$2"
         padding="$1"
         justifyContent="space-between"
         alignItems="center"
         width="100%"
       >
         {isMultiple ? (
-          <XStack space="$1">
+          <XStack>
             <ChoiceButton choice="CUSTOMER" />
             <ChoiceButton choice="PRODUCT" />
           </XStack>

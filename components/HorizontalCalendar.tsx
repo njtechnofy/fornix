@@ -1,43 +1,79 @@
+import { useTasks } from "@/hooks/useTasks";
 import {
+  CalendarDay,
   months,
   useHorizontalCalendarStore,
 } from "@/store/useHorizontalDateStore";
-import { computeCalendar } from "@/utils/worklets/getCalendarWorklet";
+import {
+  computeCalendar,
+  fillCalendar,
+} from "@/utils/worklets/getCalendarWorklet";
 import { FlashList } from "@shopify/flash-list";
 import { ChevronLeft, ChevronRight } from "@tamagui/lucide-icons";
-import { isEqual } from "date-fns";
-import { Button, H3, SizableText, XStack, YStack } from "tamagui";
+import { isEqual, startOfDay } from "date-fns";
+import { useEffect } from "react";
+import { Button, H3, SizableText, View, XStack, YStack } from "tamagui";
 const DATE_SIZE = 64;
 
-type CalendarDay = [year: number, month: number, date: number, day: string];
 type DateTuple = [number, number, number];
 
 const DateWidget = ({ item }: { item: CalendarDay }) => {
   const highlight = useHorizontalCalendarStore((state) => state.highlight);
-
+  const today = useHorizontalCalendarStore((state) => state.today);
+  // const tasks = useTasks({
+  //   date: new Date(...(item.slice(0, -1) as [number, number, number])),
+  // });
+  const thisWidget = new Date(...(item.slice(0, -2) as DateTuple));
+  const thisDay =
+    startOfDay(thisWidget).getTime() === startOfDay(today).getTime();
   const isHighlighted = isEqual(
-    new Date(...(item.slice(0, -1) as DateTuple)),
-    new Date(...(highlight.slice(0, -1) as DateTuple))
+    thisWidget,
+    new Date(...(highlight.slice(0, -2) as DateTuple))
   );
   return (
     <XStack
       paddingVertical="$2"
-      paddingHorizontal="$3"
+      width="100%"
       justifyContent="center"
       alignItems="center"
       borderRadius={10}
       {...(isHighlighted && {
-        backgroundColor: "$green10",
+        borderWidth: "$1",
+        borderColor: "$green10",
       })}
+      position="relative"
     >
-      <H3 fontWeight="$16" color={isHighlighted ? "white" : "$gray12"}>
+      <H3 fontWeight="$16" color={thisDay ? "$green10" : "$gray12"}>
         {item[2]}
       </H3>
+      {item[4] > 0 ? (
+        <View
+          justifyContent="center"
+          alignItems="center"
+          height="$1.5"
+          width="$1.5"
+          backgroundColor={
+            thisDay
+              ? "$purple10"
+              : startOfDay(thisWidget).getTime() < startOfDay(today).getTime()
+                ? "$red10"
+                : "$blue10"
+          }
+          borderRadius={100}
+          position="absolute"
+          top="$-0.75"
+          right="$-0.75"
+        >
+          <SizableText size="$1" color="white">
+            {item[4]}
+          </SizableText>
+        </View>
+      ) : null}
     </XStack>
   );
 };
 
-const renderDay = ({ item }: { item: CalendarDay }) => {
+const RenderDay = ({ item }: { item: CalendarDay }) => {
   return (
     <YStack
       onPress={() => {
@@ -45,9 +81,8 @@ const renderDay = ({ item }: { item: CalendarDay }) => {
           highlight: item,
         });
       }}
-      paddingVertical="$2"
+      padding="$2"
       width={DATE_SIZE}
-      space="$1"
       justifyContent="center"
       alignItems="center"
       marginHorizontal="$1"
@@ -61,7 +96,7 @@ const renderDay = ({ item }: { item: CalendarDay }) => {
 };
 
 const handleCalendarChange = (isPrev: boolean) => {
-  const { year, month } = useHorizontalCalendarStore.getState();
+  const { year, month, ref } = useHorizontalCalendarStore.getState();
   const isEdgeMonth = isPrev ? 0 : 11;
   const operator = isPrev ? -1 : 1;
   const newMonthWhenEdge = isPrev ? 11 : 0;
@@ -74,6 +109,16 @@ const handleCalendarChange = (isPrev: boolean) => {
     year: newYear,
     month: newMonth,
   });
+  if (isPrev) {
+    ref.current?.scrollToEnd({
+      animated: true,
+    });
+  } else {
+    ref.current?.scrollToIndex({
+      index: 0,
+      animated: true,
+    });
+  }
 
   computeCalendar(newYear, newMonth).then((calendarDays: any) => {
     useHorizontalCalendarStore.setState({
@@ -88,21 +133,40 @@ export function HorizontalCalendar() {
   const calendarDays = useHorizontalCalendarStore(
     (state) => state.calendarDays
   );
+  const filledCalendarDays = useHorizontalCalendarStore(
+    (state) => state.filledCalendarDays
+  );
   const ref = useHorizontalCalendarStore((state) => state.ref);
   const initialScroll = useHorizontalCalendarStore(
     (state) => state.initialScroll
   );
+  const tasks = useTasks({ forCalendar: true });
+
+  useEffect(() => {
+    if ((calendarDays.length, tasks?.length)) {
+      console.log("running effect");
+      fillCalendar(JSON.stringify(tasks), JSON.stringify(calendarDays)).then(
+        (tasksJSON: any) => {
+          useHorizontalCalendarStore.setState({
+            filledCalendarDays: JSON.parse(tasksJSON),
+          });
+        }
+      );
+    }
+  }, [year, month, tasks]);
+  // const date = useMemo(() => new Date(year, month,), [year, month]);
+  // const data = calendarDays;
+  const data = filledCalendarDays
+    ? filledCalendarDays[0][0] === year && filledCalendarDays[0][1] === month
+      ? filledCalendarDays
+      : calendarDays
+    : calendarDays;
 
   return (
-    <XStack elevation="$0.25">
-      <YStack>
+    <XStack elevation="$0.25" width="100%">
+      <YStack width="100%">
         <YStack width="100%">
-          <XStack
-            alignItems="center"
-            space="$2"
-            paddingHorizontal="$2"
-            width="100%"
-          >
+          <XStack alignItems="center" paddingHorizontal="$2" width="100%">
             <Button
               variant="outlined"
               onPress={() => {
@@ -112,7 +176,7 @@ export function HorizontalCalendar() {
               <ChevronLeft />
             </Button>
             <XStack
-              space="$2"
+              gap="$2"
               flex={1}
               justifyContent="center"
               alignItems="center"
@@ -148,9 +212,9 @@ export function HorizontalCalendar() {
             }}
             estimatedItemSize={DATE_SIZE}
             horizontal
-            data={calendarDays}
+            data={data}
             keyExtractor={(i) => `${i}`}
-            renderItem={renderDay}
+            renderItem={RenderDay}
           />
         </YStack>
       </YStack>

@@ -9,6 +9,8 @@ import {
 import { COLLECTIONS, dateSchemaColumns } from "../db_utils";
 import { CustomerModel } from "./Customer";
 
+export type TaskName = "collect" | "geotag" | "visit";
+
 export class TaskModel extends Model {
   static table = COLLECTIONS.TASKS;
   static associations: Associations = {
@@ -21,7 +23,8 @@ export class TaskModel extends Model {
   @immutableRelation(COLLECTIONS.CUSTOMERS, "customer_id")
   customer!: Relation<CustomerModel>;
 
-  @field("task_name") taskName!: string;
+  @field("task_name") taskName!: TaskName;
+  @field("customer_name") customerName!: string;
 
   @date("expected_at") expectedAt!: number;
 
@@ -40,6 +43,7 @@ export const taskSchema = tableSchema({
   name: COLLECTIONS.TASKS,
   columns: [
     { name: "customer_id", type: "string" },
+    { name: "customer_name", type: "string" },
     { name: "task_name", type: "string" },
     { name: "expected_at", type: "number" },
     { name: "resolved_at", type: "number", isOptional: true },

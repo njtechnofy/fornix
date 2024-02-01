@@ -38,6 +38,8 @@ export const updateAreas = (areas: AreaType[]) =>
   });
 
 export const selectArea = (area: { id: string; name: string }) => {
+  closeSheet();
+
   useAreaStore.setState((state) => ({
     area: {
       id: area.id,
@@ -46,8 +48,6 @@ export const selectArea = (area: { id: string; name: string }) => {
     },
     areas: state.areas.map((a) => ({ ...a, isSelected: a.id === area.id })),
   }));
-
-  closeSheet();
 };
 
 export function syncArea() {

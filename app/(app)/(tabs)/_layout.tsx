@@ -24,7 +24,7 @@ import {
   Settings,
 } from "@tamagui/lucide-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useDeferredValue, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, SizableText, XStack, YStack, useTheme } from "tamagui";
@@ -46,7 +46,6 @@ export const CustomHeader = (props: any) => {
       }
     >
       <XStack
-        space="$2"
         paddingTop={insets.top ?? 40}
         paddingHorizontal="$2"
         paddingBottom={isMap ? "$8" : "$2"}
@@ -60,14 +59,18 @@ export const CustomHeader = (props: any) => {
         >
           <XStack
             flex={1}
-            maxWidth="$12"
             justifyContent="center"
             alignItems="center"
             padding="$2"
             backgroundColor="#272F27"
             borderRadius={10}
           >
-            <SizableText size="$2" color="white" numberOfLines={1}>
+            <SizableText
+              maxWidth="$10"
+              size="$2"
+              color="white"
+              numberOfLines={1}
+            >
               {selectedArea ? selectedArea.name : "All Areas"}
             </SizableText>
             <ChevronDown color="white" size="$1" />
@@ -204,9 +207,7 @@ const BottomSheetContainer = () => {
     [type]
   );
   const ref = useSheetStore((state) => state.ref);
-
   const isOpen = type !== "map" && !!type;
-  const deferredOpen = useDeferredValue(isOpen);
 
   const theme = useTheme();
   const renderBackdrop = useCallback(
@@ -248,7 +249,7 @@ const BottomSheetContainer = () => {
         backgroundColor: theme.background.val,
       }}
     >
-      <YStack flex={1}>{deferredOpen ? <InsideSheet /> : <Loading />}</YStack>
+      <YStack flex={1}>{isOpen ? <InsideSheet /> : <Loading />}</YStack>
     </BottomSheet>
   );
 };

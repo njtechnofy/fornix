@@ -1,37 +1,74 @@
 import { COLLECTIONS } from "@/db/db_utils";
 import { TaskModel } from "@/db/models_and_schemas/Tasks";
+import { useHorizontalCalendarStore } from "@/store/useHorizontalDateStore";
 import { Q } from "@nozbe/watermelondb";
 import { useDatabase } from "@nozbe/watermelondb/hooks";
 import { endOfDay, startOfDay } from "date-fns";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
+import { Subscription } from "rxjs";
 
 interface TaskOptions {
-  date?: Date;
   type?: "expected" | "resolved";
+  forCalendar?: boolean;
 }
 
-export const useTasks = ({ date, type = "expected" }: TaskOptions) => {
+export const useTasks = ({ forCalendar, type = "expected" }: TaskOptions) => {
   const [tasks, setTasks] = useState<TaskModel[]>();
+  const calendarDays = useHorizontalCalendarStore(
+    (state) => state.calendarDays
+  );
+
+  const highlight = useHorizontalCalendarStore((state) => state.highlight);
+
   const database = useDatabase();
   let query = database.get<TaskModel>(COLLECTIONS.TASKS).query();
 
-  if (typeof date !== "undefined") {
+  if (typeof forCalendar !== "undefined") {
+    const date1 = new Date(
+      ...((forCalendar ? calendarDays[0] : highlight).slice(0, -2) as [
+        number,
+        number,
+        number,
+      ])
+    );
+    const date2 = forCalendar
+      ? new Date(
+          ...(calendarDays[calendarDays.length - 1].slice(0, -2) as [
+            number,
+            number,
+            number,
+          ])
+        )
+      : date1;
     query = query.extend(
       Q.and(
-        Q.where(`${type}_at`, Q.gte(startOfDay(date).getTime())),
-        Q.where(`${type}_at`, Q.lte(endOfDay(date).getTime()))
+        Q.where(`${type}_at`, Q.gte(startOfDay(date1).getTime())),
+        Q.where(`${type}_at`, Q.lte(endOfDay(date2).getTime()))
       )
     );
   }
-  query = query.extend(Q.sortBy(`${type}_at`));
+  const dependency =
+    typeof forCalendar === "undefined"
+      ? 0
+      : forCalendar
+        ? calendarDays[0][1]
+        : highlight;
+  query = query.extend(Q.sortBy(`${type}_at`, "asc"));
   useFocusEffect(
     useCallback(() => {
-      const subscription = query.observe().subscribe(setTasks);
+      let subscription: Subscription;
+
+      if (!forCalendar) {
+        subscription = query.observe().subscribe(setTasks);
+      } else {
+        query.unsafeFetchRaw().then(setTasks);
+      }
+
       return () => {
-        subscription.unsubscribe();
+        subscription?.unsubscribe();
       };
-    }, [])
+    }, [dependency])
   );
   return tasks;
 };

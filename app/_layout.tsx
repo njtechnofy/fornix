@@ -6,38 +6,46 @@ import "react-native-reanimated";
 import { Asset } from "expo-asset";
 import { useFonts } from "expo-font";
 import {
+  Accuracy,
   LocationAccuracy,
   LocationSubscription,
   requestBackgroundPermissionsAsync,
   requestForegroundPermissionsAsync,
+  startLocationUpdatesAsync,
   watchPositionAsync,
 } from "expo-location";
 import { SplashScreen, Stack } from "expo-router";
-import * as TaskManager from "expo-task-manager";
 import { useEffect } from "react";
 import { Alert, Image } from "react-native";
 
-const BACKGROUND_FETCH_TASK = "background-fetch";
+const LOCATION_TASK_NAME = "background-location-task";
+const FETCH_INTERVAL = 20000;
 
 /**
  * used to set backgroundStateUpdate state from task
  * for use in bg task
  */
 
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, ({ data, error }: any) => {
-  if (error) {
-    return;
-  }
-  if (data) {
-    console.log("task defined");
-    try {
-      const { locations } = data;
-      console.log("locations inisdeDefinedtasks :" + locations);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-});
+// TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }: any) => {
+//   if (error) {
+//     console.log(error);
+//     return;
+//   }
+//   if (data) {
+//     try {
+//       const now = Date.now();
+//       const currentTime = new Date(now).toISOString();
+
+//       console.log(currentTime, data.locations[0].timestamp);
+//       return currentTime
+//         ? BackgroundFetch.BackgroundFetchResult.NewData
+//         : BackgroundFetch.BackgroundFetchResult.NoData;
+//     } catch (err) {
+//       console.log(err);
+//       return BackgroundFetch.BackgroundFetchResult.Failed;
+//     }
+//   }
+// });
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -46,7 +54,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(apps)",
+  initialRouteName: "(app)",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -68,6 +76,7 @@ export default function RootLayout() {
           require("../assets/images/fornix.png"),
           require("../assets/images/fornix-white.png"),
         ]);
+
         await getPermissionsOrExit();
 
         const locationWatcher = await watchPositionAsync(
@@ -77,7 +86,6 @@ export default function RootLayout() {
             timeInterval: 10000,
           },
           (loc) => {
-            console.log(loc);
             //pass to global store
 
             updateLocation(loc);
@@ -101,6 +109,7 @@ export default function RootLayout() {
     }
     init();
     return () => {
+      // unregisterBackgroundFetchAsync()
       //cleanup memory
       locationSubscriber?.remove();
       unsubscribeNetInfo();
@@ -152,8 +161,16 @@ async function getPermissionsOrExit() {
       await requestBackgroundPermissionsAsync();
 
     if (!backgroundGrant) {
-      Alert.alert("sad inisde");
+      Alert.alert("enable background permission to sync on background");
+    } else {
+      if (false) {
+        await startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+          accuracy: Accuracy.BestForNavigation,
+          timeInterval: FETCH_INTERVAL,
+        });
+      }
     }
+
     // console.log("should start");
     // const tasks = await TaskManager.getRegisteredTasksAsync();
     // console.log(tasks);

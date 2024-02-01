@@ -28,15 +28,24 @@ export const months = [
   "December",
 ] as const;
 
-type CalendarDay = [year: number, month: number, date: number, day: string];
+export type CalendarDay = [
+  year: number,
+  month: number,
+  date: number,
+  day: string,
+  tasks: number,
+];
 
 export const useHorizontalCalendarStore = create<{
   month: number;
   year: number;
+  today: Date;
   // isScrolling: boolean;
   initialScroll: number;
   highlight: CalendarDay;
   calendarDays: CalendarDay[];
+  filledCalendarDays?: CalendarDay[];
+
   ref: RefObject<FlashList<CalendarDay[]>>;
 }>(() => {
   const ref = createRef<FlashList<CalendarDay[]>>();
@@ -52,8 +61,10 @@ export const useHorizontalCalendarStore = create<{
     ref,
     year,
     month,
-    highlight: [year, month, date, day],
+    highlight: [year, month, date, day, 0],
+    today,
     initialScroll,
     calendarDays: [],
+    filledCalendarDays: undefined,
   };
 });

@@ -103,7 +103,6 @@ export const Point: FunctionComponent<PointProps> = memo(
         >
           <XStack
             maxWidth="$10"
-            space="$2"
             backgroundColor="black"
             borderRadius={20}
             padding="$1"
@@ -144,7 +143,7 @@ export const Point: FunctionComponent<PointProps> = memo(
 );
 
 export default function Map() {
-  const { customers } = useCustomers({});
+  const { customers } = useCustomers({ geoTagged: true });
 
   return (
     <CustomSuspense
@@ -208,6 +207,7 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
   );
 
   const [points] = useClusterer(
+    //@ts-ignore
     parsedData,
     {
       height,
@@ -291,7 +291,7 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
           </AnimatedMap>
 
           {isSearching ? null : (
-            <YStack space="$4" position="absolute" bottom="$18" right="$4">
+            <YStack gap="$2" position="absolute" bottom="$18" right="$4">
               <Button
                 elevation="$0.5"
                 elevate
@@ -607,7 +607,7 @@ key={
     >
       <XStack
         maxWidth="$10"
-        space="$2"
+   
         backgroundColor={
           c.unpaid
             ? "$orange8"

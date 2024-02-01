@@ -18,7 +18,6 @@ export function GeofenceSheet() {
           borderRadius={20}
           alignItems="center"
           backgroundColor="$gray3"
-          space="$4"
         >
           <H3>No customers nearby</H3>
           <Button

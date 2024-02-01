@@ -59,7 +59,7 @@ export const useOrders = ({
   if (typeof limit !== "undefined") {
     query = query.extend(Q.take(limit));
   }
-  query = query.extend(Q.sortBy("paid", "asc"));
+  query = query.extend(Q.sortBy("created_at", "desc"));
 
   useFocusEffect(
     useCallback(() => {

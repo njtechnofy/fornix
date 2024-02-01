@@ -5,6 +5,10 @@ import { computeCalendar } from "@/utils/worklets/getCalendarWorklet";
 import { Redirect, Stack } from "expo-router";
 import { useEffect } from "react";
 
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "(tabs)",
+};
 export default function App() {
   const userId = useUserStore((state) => state.userId);
   if (!userId) {
@@ -19,6 +23,7 @@ function ProtectedApp() {
   const month = useHorizontalCalendarStore((state) => state.month);
   syncArea();
   useEffect(() => {
+    console.log("setting calendar");
     computeCalendar(year, month).then((days) =>
       useHorizontalCalendarStore.setState({
         calendarDays: JSON.parse(days),

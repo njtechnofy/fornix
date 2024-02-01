@@ -110,10 +110,14 @@ export async function seed(
         areas.flatMap((a, index) =>
           Array.from(Array(customerPerArea).keys()).map((k) =>
             Customers.create((c) => {
-              c.name =
-                index === 0 && k === 0
-                  ? "Nabua's People Mart"
-                  : `RC:${faker.company.name()}`;
+              const allPaid = Math.random() > 0.5;
+              const allDelivered = Math.random() > 0.5;
+              const isNabua = index === 0 && k === 0;
+              const name = isNabua
+                ? "Nabua's People Mart"
+                : `RC:${faker.company.name()}`;
+
+              c.name = name;
 
               if (Math.random() > 0.5) {
                 c.latitude =
@@ -130,8 +134,8 @@ export async function seed(
               c.radius = 100;
               c.area.id = a.id;
               c.mobileNumber = faker.phone.number();
-              c.allPaid = Math.random() > 0.5;
-              c.allDelivered = Math.random() > 0.5;
+              c.allPaid = allPaid;
+              c.allDelivered = allDelivered;
             })
           )
         )
@@ -191,8 +195,24 @@ export async function seed(
         if (!customer.latitude || !customer.longitude) {
           tasksToCreate.push(
             Tasks.create((t) => {
-              t.taskName = "tag";
+              t.taskName = "geotag";
               t.customer.id = customer.id;
+              t.customerName = customer.name;
+              t.createdAt = customer.createdAt;
+              t.expectedAt = faker.date
+                .soon({
+                  days: Math.floor(Math.random() * 5 + 1),
+                  refDate: new Date(),
+                })
+                .getTime();
+            })
+          );
+        } else if (customer.allDelivered && customer.allDelivered) {
+          tasksToCreate.push(
+            Tasks.create((t) => {
+              t.taskName = "geotag";
+              t.customer.id = customer.id;
+              t.customerName = customer.name;
               t.createdAt = customer.createdAt;
               t.expectedAt = faker.date
                 .soon({
@@ -203,6 +223,7 @@ export async function seed(
             })
           );
         }
+
         principals.forEach((pr) => {
           customerPrincipalPromises.push(
             CustomerPrincipals.create((cp) => {
@@ -235,13 +256,13 @@ export async function seed(
                     })
                     .getTime()
                 : Math.random() > 0.5
-                ? faker.date
-                    .soon({
-                      days: Math.floor(Math.random() * 5 + 1),
-                      refDate: createDate,
-                    })
-                    .getTime()
-                : undefined;
+                  ? faker.date
+                      .soon({
+                        days: Math.floor(Math.random() * 5 + 1),
+                        refDate: createDate,
+                      })
+                      .getTime()
+                  : undefined;
             })
           );
         }
@@ -317,6 +338,7 @@ export async function seed(
             Tasks.create((t) => {
               t.taskName = "collect";
               t.customer.id = order.customer.id;
+              t.customerName = order.customerName;
               t.createdAt = order.createdAt;
               t.expectedAt = faker.date
                 .soon({

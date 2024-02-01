@@ -8,7 +8,6 @@ const renderItem = ({ item }: { item: CustomerModel }) => (
       padding="$4"
       backgroundColor="$gray1"
       marginVertical="$2"
-      space="$2"
       alignItems="center"
       borderRadius="$4"
       elevation="$0.5"
@@ -17,7 +16,7 @@ const renderItem = ({ item }: { item: CustomerModel }) => (
       <XStack maxWidth="85%" flex={1}>
         <Text numberOfLines={1}>{item.name}</Text>
       </XStack>
-      <YStack width="15%" space="$2" alignItems="flex-end">
+      <YStack width="15%" alignItems="flex-end">
         {!item.allPaid ? (
           <XStack padding="$2" backgroundColor="$orange8" borderRadius={20} />
         ) : null}
