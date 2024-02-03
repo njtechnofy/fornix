@@ -3337,9 +3337,10 @@ var require_cjs21 = __commonJS({
   }
 });
 
-// node_modules/tslib/tslib.es6.js
+// node_modules/react-remove-scroll/node_modules/tslib/tslib.es6.mjs
 var tslib_es6_exports = {};
 __export(tslib_es6_exports, {
+  __addDisposableResource: () => __addDisposableResource,
   __assign: () => __assign,
   __asyncDelegator: () => __asyncDelegator,
   __asyncGenerator: () => __asyncGenerator,
@@ -3351,6 +3352,8 @@ __export(tslib_es6_exports, {
   __classPrivateFieldSet: () => __classPrivateFieldSet,
   __createBinding: () => __createBinding,
   __decorate: () => __decorate,
+  __disposeResources: () => __disposeResources,
+  __esDecorate: () => __esDecorate,
   __exportStar: () => __exportStar,
   __extends: () => __extends,
   __generator: () => __generator,
@@ -3359,12 +3362,16 @@ __export(tslib_es6_exports, {
   __makeTemplateObject: () => __makeTemplateObject,
   __metadata: () => __metadata,
   __param: () => __param,
+  __propKey: () => __propKey,
   __read: () => __read,
   __rest: () => __rest,
+  __runInitializers: () => __runInitializers,
+  __setFunctionName: () => __setFunctionName,
   __spread: () => __spread,
   __spreadArray: () => __spreadArray,
   __spreadArrays: () => __spreadArrays,
-  __values: () => __values
+  __values: () => __values,
+  default: () => tslib_es6_default
 });
 function __extends(d, b) {
   if (typeof b !== "function" && b !== null)
@@ -3402,6 +3409,66 @@ function __param(paramIndex, decorator) {
   return function(target, key) {
     decorator(target, key, paramIndex);
   };
+}
+function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+  function accept(f) {
+    if (f !== void 0 && typeof f !== "function")
+      throw new TypeError("Function expected");
+    return f;
+  }
+  __name(accept, "accept");
+  var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+  var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+  var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+  var _, done = false;
+  for (var i = decorators.length - 1; i >= 0; i--) {
+    var context = {};
+    for (var p in contextIn)
+      context[p] = p === "access" ? {} : contextIn[p];
+    for (var p in contextIn.access)
+      context.access[p] = contextIn.access[p];
+    context.addInitializer = function(f) {
+      if (done)
+        throw new TypeError("Cannot add initializers after decoration has completed");
+      extraInitializers.push(accept(f || null));
+    };
+    var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
+    if (kind === "accessor") {
+      if (result === void 0)
+        continue;
+      if (result === null || typeof result !== "object")
+        throw new TypeError("Object expected");
+      if (_ = accept(result.get))
+        descriptor.get = _;
+      if (_ = accept(result.set))
+        descriptor.set = _;
+      if (_ = accept(result.init))
+        initializers.unshift(_);
+    } else if (_ = accept(result)) {
+      if (kind === "field")
+        initializers.unshift(_);
+      else
+        descriptor[key] = _;
+    }
+  }
+  if (target)
+    Object.defineProperty(target, contextIn.name, descriptor);
+  done = true;
+}
+function __runInitializers(thisArg, initializers, value) {
+  var useValue = arguments.length > 2;
+  for (var i = 0; i < initializers.length; i++) {
+    value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+  }
+  return useValue ? value : void 0;
+}
+function __propKey(x) {
+  return typeof x === "symbol" ? x : "".concat(x);
+}
+function __setFunctionName(f, name, prefix) {
+  if (typeof name === "symbol")
+    name = name.description ? "[".concat(name.description, "]") : "";
+  return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
 }
 function __metadata(metadataKey, metadataValue) {
   if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
@@ -3456,7 +3523,7 @@ function __generator(thisArg, body) {
   function step(op) {
     if (f)
       throw new TypeError("Generator is already executing.");
-    while (_)
+    while (g && (g = 0, op[0] && (_ = 0)), _)
       try {
         if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
           return t;
@@ -3634,7 +3701,7 @@ function __asyncDelegator(o) {
   }, i;
   function verb(n, f) {
     i[n] = o[n] ? function(v) {
-      return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v;
+      return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
     } : f;
   }
   __name(verb, "verb");
@@ -3705,9 +3772,58 @@ function __classPrivateFieldIn(state, receiver) {
     throw new TypeError("Cannot use 'in' operator on non-object");
   return typeof state === "function" ? receiver === state : state.has(receiver);
 }
-var extendStatics, __assign, __createBinding, __setModuleDefault;
+function __addDisposableResource(env, value, async) {
+  if (value !== null && value !== void 0) {
+    if (typeof value !== "object" && typeof value !== "function")
+      throw new TypeError("Object expected.");
+    var dispose;
+    if (async) {
+      if (!Symbol.asyncDispose)
+        throw new TypeError("Symbol.asyncDispose is not defined.");
+      dispose = value[Symbol.asyncDispose];
+    }
+    if (dispose === void 0) {
+      if (!Symbol.dispose)
+        throw new TypeError("Symbol.dispose is not defined.");
+      dispose = value[Symbol.dispose];
+    }
+    if (typeof dispose !== "function")
+      throw new TypeError("Object not disposable.");
+    env.stack.push({ value, dispose, async });
+  } else if (async) {
+    env.stack.push({ async: true });
+  }
+  return value;
+}
+function __disposeResources(env) {
+  function fail(e) {
+    env.error = env.hasError ? new _SuppressedError(e, env.error, "An error was suppressed during disposal.") : e;
+    env.hasError = true;
+  }
+  __name(fail, "fail");
+  function next() {
+    while (env.stack.length) {
+      var rec = env.stack.pop();
+      try {
+        var result = rec.dispose && rec.dispose.call(rec.value);
+        if (rec.async)
+          return Promise.resolve(result).then(next, function(e) {
+            fail(e);
+            return next();
+          });
+      } catch (e) {
+        fail(e);
+      }
+    }
+    if (env.hasError)
+      throw env.error;
+  }
+  __name(next, "next");
+  return next();
+}
+var extendStatics, __assign, __createBinding, __setModuleDefault, _SuppressedError, tslib_es6_default;
 var init_tslib_es6 = __esm({
-  "node_modules/tslib/tslib.es6.js"() {
+  "node_modules/react-remove-scroll/node_modules/tslib/tslib.es6.mjs"() {
     extendStatics = /* @__PURE__ */ __name(function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -3720,7 +3836,7 @@ var init_tslib_es6 = __esm({
     }, "extendStatics");
     __name(__extends, "__extends");
     __assign = /* @__PURE__ */ __name(function() {
-      __assign = Object.assign || /* @__PURE__ */ __name(function __assign4(t) {
+      __assign = Object.assign || /* @__PURE__ */ __name(function __assign6(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
           for (var p in s)
@@ -3734,6 +3850,10 @@ var init_tslib_es6 = __esm({
     __name(__rest, "__rest");
     __name(__decorate, "__decorate");
     __name(__param, "__param");
+    __name(__esDecorate, "__esDecorate");
+    __name(__runInitializers, "__runInitializers");
+    __name(__propKey, "__propKey");
+    __name(__setFunctionName, "__setFunctionName");
     __name(__metadata, "__metadata");
     __name(__awaiter, "__awaiter");
     __name(__generator, "__generator");
@@ -3773,6 +3893,41 @@ var init_tslib_es6 = __esm({
     __name(__classPrivateFieldGet, "__classPrivateFieldGet");
     __name(__classPrivateFieldSet, "__classPrivateFieldSet");
     __name(__classPrivateFieldIn, "__classPrivateFieldIn");
+    __name(__addDisposableResource, "__addDisposableResource");
+    _SuppressedError = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+      var e = new Error(message);
+      return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+    };
+    __name(__disposeResources, "__disposeResources");
+    tslib_es6_default = {
+      __extends,
+      __assign,
+      __rest,
+      __decorate,
+      __param,
+      __metadata,
+      __awaiter,
+      __generator,
+      __createBinding,
+      __exportStar,
+      __values,
+      __read,
+      __spread,
+      __spreadArrays,
+      __spreadArray,
+      __await,
+      __asyncGenerator,
+      __asyncDelegator,
+      __asyncValues,
+      __makeTemplateObject,
+      __importStar,
+      __importDefault,
+      __classPrivateFieldGet,
+      __classPrivateFieldSet,
+      __classPrivateFieldIn,
+      __addDisposableResource,
+      __disposeResources
+    };
   }
 });
 
@@ -3894,7 +4049,7 @@ var require_mergeRef = __commonJS({
 // node_modules/use-callback-ref/node_modules/tslib/tslib.es6.mjs
 var tslib_es6_exports2 = {};
 __export(tslib_es6_exports2, {
-  __addDisposableResource: () => __addDisposableResource,
+  __addDisposableResource: () => __addDisposableResource2,
   __assign: () => __assign2,
   __asyncDelegator: () => __asyncDelegator2,
   __asyncGenerator: () => __asyncGenerator2,
@@ -3906,8 +4061,8 @@ __export(tslib_es6_exports2, {
   __classPrivateFieldSet: () => __classPrivateFieldSet2,
   __createBinding: () => __createBinding2,
   __decorate: () => __decorate2,
-  __disposeResources: () => __disposeResources,
-  __esDecorate: () => __esDecorate,
+  __disposeResources: () => __disposeResources2,
+  __esDecorate: () => __esDecorate2,
   __exportStar: () => __exportStar2,
   __extends: () => __extends2,
   __generator: () => __generator2,
@@ -3916,16 +4071,16 @@ __export(tslib_es6_exports2, {
   __makeTemplateObject: () => __makeTemplateObject2,
   __metadata: () => __metadata2,
   __param: () => __param2,
-  __propKey: () => __propKey,
+  __propKey: () => __propKey2,
   __read: () => __read2,
   __rest: () => __rest2,
-  __runInitializers: () => __runInitializers,
-  __setFunctionName: () => __setFunctionName,
+  __runInitializers: () => __runInitializers2,
+  __setFunctionName: () => __setFunctionName2,
   __spread: () => __spread2,
   __spreadArray: () => __spreadArray2,
   __spreadArrays: () => __spreadArrays2,
   __values: () => __values2,
-  default: () => tslib_es6_default
+  default: () => tslib_es6_default2
 });
 function __extends2(d, b) {
   if (typeof b !== "function" && b !== null)
@@ -3964,7 +4119,7 @@ function __param2(paramIndex, decorator) {
     decorator(target, key, paramIndex);
   };
 }
-function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+function __esDecorate2(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
   function accept(f) {
     if (f !== void 0 && typeof f !== "function")
       throw new TypeError("Function expected");
@@ -4009,17 +4164,17 @@ function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, e
     Object.defineProperty(target, contextIn.name, descriptor);
   done = true;
 }
-function __runInitializers(thisArg, initializers, value) {
+function __runInitializers2(thisArg, initializers, value) {
   var useValue = arguments.length > 2;
   for (var i = 0; i < initializers.length; i++) {
     value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
   }
   return useValue ? value : void 0;
 }
-function __propKey(x) {
+function __propKey2(x) {
   return typeof x === "symbol" ? x : "".concat(x);
 }
-function __setFunctionName(f, name, prefix) {
+function __setFunctionName2(f, name, prefix) {
   if (typeof name === "symbol")
     name = name.description ? "[".concat(name.description, "]") : "";
   return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
@@ -4326,7 +4481,7 @@ function __classPrivateFieldIn2(state, receiver) {
     throw new TypeError("Cannot use 'in' operator on non-object");
   return typeof state === "function" ? receiver === state : state.has(receiver);
 }
-function __addDisposableResource(env, value, async) {
+function __addDisposableResource2(env, value, async) {
   if (value !== null && value !== void 0) {
     if (typeof value !== "object" && typeof value !== "function")
       throw new TypeError("Object expected.");
@@ -4349,9 +4504,9 @@ function __addDisposableResource(env, value, async) {
   }
   return value;
 }
-function __disposeResources(env) {
+function __disposeResources2(env) {
   function fail(e) {
-    env.error = env.hasError ? new _SuppressedError(e, env.error, "An error was suppressed during disposal.") : e;
+    env.error = env.hasError ? new _SuppressedError2(e, env.error, "An error was suppressed during disposal.") : e;
     env.hasError = true;
   }
   __name(fail, "fail");
@@ -4375,7 +4530,7 @@ function __disposeResources(env) {
   __name(next, "next");
   return next();
 }
-var extendStatics2, __assign2, __createBinding2, __setModuleDefault2, _SuppressedError, tslib_es6_default;
+var extendStatics2, __assign2, __createBinding2, __setModuleDefault2, _SuppressedError2, tslib_es6_default2;
 var init_tslib_es62 = __esm({
   "node_modules/use-callback-ref/node_modules/tslib/tslib.es6.mjs"() {
     extendStatics2 = /* @__PURE__ */ __name(function(d, b) {
@@ -4390,7 +4545,7 @@ var init_tslib_es62 = __esm({
     }, "extendStatics");
     __name(__extends2, "__extends");
     __assign2 = /* @__PURE__ */ __name(function() {
-      __assign2 = Object.assign || /* @__PURE__ */ __name(function __assign4(t) {
+      __assign2 = Object.assign || /* @__PURE__ */ __name(function __assign6(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
           for (var p in s)
@@ -4404,10 +4559,10 @@ var init_tslib_es62 = __esm({
     __name(__rest2, "__rest");
     __name(__decorate2, "__decorate");
     __name(__param2, "__param");
-    __name(__esDecorate, "__esDecorate");
-    __name(__runInitializers, "__runInitializers");
-    __name(__propKey, "__propKey");
-    __name(__setFunctionName, "__setFunctionName");
+    __name(__esDecorate2, "__esDecorate");
+    __name(__runInitializers2, "__runInitializers");
+    __name(__propKey2, "__propKey");
+    __name(__setFunctionName2, "__setFunctionName");
     __name(__metadata2, "__metadata");
     __name(__awaiter2, "__awaiter");
     __name(__generator2, "__generator");
@@ -4447,13 +4602,13 @@ var init_tslib_es62 = __esm({
     __name(__classPrivateFieldGet2, "__classPrivateFieldGet");
     __name(__classPrivateFieldSet2, "__classPrivateFieldSet");
     __name(__classPrivateFieldIn2, "__classPrivateFieldIn");
-    __name(__addDisposableResource, "__addDisposableResource");
-    _SuppressedError = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+    __name(__addDisposableResource2, "__addDisposableResource");
+    _SuppressedError2 = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
       var e = new Error(message);
       return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
     };
-    __name(__disposeResources, "__disposeResources");
-    tslib_es6_default = {
+    __name(__disposeResources2, "__disposeResources");
+    tslib_es6_default2 = {
       __extends: __extends2,
       __assign: __assign2,
       __rest: __rest2,
@@ -4479,8 +4634,8 @@ var init_tslib_es62 = __esm({
       __classPrivateFieldGet: __classPrivateFieldGet2,
       __classPrivateFieldSet: __classPrivateFieldSet2,
       __classPrivateFieldIn: __classPrivateFieldIn2,
-      __addDisposableResource,
-      __disposeResources
+      __addDisposableResource: __addDisposableResource2,
+      __disposeResources: __disposeResources2
     };
   }
 });
@@ -4650,7 +4805,7 @@ var require_es52 = __commonJS({
 // node_modules/use-sidecar/node_modules/tslib/tslib.es6.mjs
 var tslib_es6_exports3 = {};
 __export(tslib_es6_exports3, {
-  __addDisposableResource: () => __addDisposableResource2,
+  __addDisposableResource: () => __addDisposableResource3,
   __assign: () => __assign3,
   __asyncDelegator: () => __asyncDelegator3,
   __asyncGenerator: () => __asyncGenerator3,
@@ -4662,8 +4817,8 @@ __export(tslib_es6_exports3, {
   __classPrivateFieldSet: () => __classPrivateFieldSet3,
   __createBinding: () => __createBinding3,
   __decorate: () => __decorate3,
-  __disposeResources: () => __disposeResources2,
-  __esDecorate: () => __esDecorate2,
+  __disposeResources: () => __disposeResources3,
+  __esDecorate: () => __esDecorate3,
   __exportStar: () => __exportStar3,
   __extends: () => __extends3,
   __generator: () => __generator3,
@@ -4672,16 +4827,16 @@ __export(tslib_es6_exports3, {
   __makeTemplateObject: () => __makeTemplateObject3,
   __metadata: () => __metadata3,
   __param: () => __param3,
-  __propKey: () => __propKey2,
+  __propKey: () => __propKey3,
   __read: () => __read3,
   __rest: () => __rest3,
-  __runInitializers: () => __runInitializers2,
-  __setFunctionName: () => __setFunctionName2,
+  __runInitializers: () => __runInitializers3,
+  __setFunctionName: () => __setFunctionName3,
   __spread: () => __spread3,
   __spreadArray: () => __spreadArray3,
   __spreadArrays: () => __spreadArrays3,
   __values: () => __values3,
-  default: () => tslib_es6_default2
+  default: () => tslib_es6_default3
 });
 function __extends3(d, b) {
   if (typeof b !== "function" && b !== null)
@@ -4720,7 +4875,7 @@ function __param3(paramIndex, decorator) {
     decorator(target, key, paramIndex);
   };
 }
-function __esDecorate2(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+function __esDecorate3(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
   function accept(f) {
     if (f !== void 0 && typeof f !== "function")
       throw new TypeError("Function expected");
@@ -4765,17 +4920,17 @@ function __esDecorate2(ctor, descriptorIn, decorators, contextIn, initializers, 
     Object.defineProperty(target, contextIn.name, descriptor);
   done = true;
 }
-function __runInitializers2(thisArg, initializers, value) {
+function __runInitializers3(thisArg, initializers, value) {
   var useValue = arguments.length > 2;
   for (var i = 0; i < initializers.length; i++) {
     value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
   }
   return useValue ? value : void 0;
 }
-function __propKey2(x) {
+function __propKey3(x) {
   return typeof x === "symbol" ? x : "".concat(x);
 }
-function __setFunctionName2(f, name, prefix) {
+function __setFunctionName3(f, name, prefix) {
   if (typeof name === "symbol")
     name = name.description ? "[".concat(name.description, "]") : "";
   return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
@@ -5082,7 +5237,7 @@ function __classPrivateFieldIn3(state, receiver) {
     throw new TypeError("Cannot use 'in' operator on non-object");
   return typeof state === "function" ? receiver === state : state.has(receiver);
 }
-function __addDisposableResource2(env, value, async) {
+function __addDisposableResource3(env, value, async) {
   if (value !== null && value !== void 0) {
     if (typeof value !== "object" && typeof value !== "function")
       throw new TypeError("Object expected.");
@@ -5105,9 +5260,9 @@ function __addDisposableResource2(env, value, async) {
   }
   return value;
 }
-function __disposeResources2(env) {
+function __disposeResources3(env) {
   function fail(e) {
-    env.error = env.hasError ? new _SuppressedError2(e, env.error, "An error was suppressed during disposal.") : e;
+    env.error = env.hasError ? new _SuppressedError3(e, env.error, "An error was suppressed during disposal.") : e;
     env.hasError = true;
   }
   __name(fail, "fail");
@@ -5131,7 +5286,7 @@ function __disposeResources2(env) {
   __name(next, "next");
   return next();
 }
-var extendStatics3, __assign3, __createBinding3, __setModuleDefault3, _SuppressedError2, tslib_es6_default2;
+var extendStatics3, __assign3, __createBinding3, __setModuleDefault3, _SuppressedError3, tslib_es6_default3;
 var init_tslib_es63 = __esm({
   "node_modules/use-sidecar/node_modules/tslib/tslib.es6.mjs"() {
     extendStatics3 = /* @__PURE__ */ __name(function(d, b) {
@@ -5146,7 +5301,7 @@ var init_tslib_es63 = __esm({
     }, "extendStatics");
     __name(__extends3, "__extends");
     __assign3 = /* @__PURE__ */ __name(function() {
-      __assign3 = Object.assign || /* @__PURE__ */ __name(function __assign4(t) {
+      __assign3 = Object.assign || /* @__PURE__ */ __name(function __assign6(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
           for (var p in s)
@@ -5160,10 +5315,10 @@ var init_tslib_es63 = __esm({
     __name(__rest3, "__rest");
     __name(__decorate3, "__decorate");
     __name(__param3, "__param");
-    __name(__esDecorate2, "__esDecorate");
-    __name(__runInitializers2, "__runInitializers");
-    __name(__propKey2, "__propKey");
-    __name(__setFunctionName2, "__setFunctionName");
+    __name(__esDecorate3, "__esDecorate");
+    __name(__runInitializers3, "__runInitializers");
+    __name(__propKey3, "__propKey");
+    __name(__setFunctionName3, "__setFunctionName");
     __name(__metadata3, "__metadata");
     __name(__awaiter3, "__awaiter");
     __name(__generator3, "__generator");
@@ -5203,13 +5358,13 @@ var init_tslib_es63 = __esm({
     __name(__classPrivateFieldGet3, "__classPrivateFieldGet");
     __name(__classPrivateFieldSet3, "__classPrivateFieldSet");
     __name(__classPrivateFieldIn3, "__classPrivateFieldIn");
-    __name(__addDisposableResource2, "__addDisposableResource");
-    _SuppressedError2 = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+    __name(__addDisposableResource3, "__addDisposableResource");
+    _SuppressedError3 = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
       var e = new Error(message);
       return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
     };
-    __name(__disposeResources2, "__disposeResources");
-    tslib_es6_default2 = {
+    __name(__disposeResources3, "__disposeResources");
+    tslib_es6_default3 = {
       __extends: __extends3,
       __assign: __assign3,
       __rest: __rest3,
@@ -5235,8 +5390,8 @@ var init_tslib_es63 = __esm({
       __classPrivateFieldGet: __classPrivateFieldGet3,
       __classPrivateFieldSet: __classPrivateFieldSet3,
       __classPrivateFieldIn: __classPrivateFieldIn3,
-      __addDisposableResource: __addDisposableResource2,
-      __disposeResources: __disposeResources2
+      __addDisposableResource: __addDisposableResource3,
+      __disposeResources: __disposeResources3
     };
   }
 });
@@ -5647,6 +5802,1194 @@ var require_UI = __commonJS({
   }
 });
 
+// node_modules/react-remove-scroll-bar/node_modules/tslib/tslib.es6.mjs
+var tslib_es6_exports4 = {};
+__export(tslib_es6_exports4, {
+  __addDisposableResource: () => __addDisposableResource4,
+  __assign: () => __assign4,
+  __asyncDelegator: () => __asyncDelegator4,
+  __asyncGenerator: () => __asyncGenerator4,
+  __asyncValues: () => __asyncValues4,
+  __await: () => __await4,
+  __awaiter: () => __awaiter4,
+  __classPrivateFieldGet: () => __classPrivateFieldGet4,
+  __classPrivateFieldIn: () => __classPrivateFieldIn4,
+  __classPrivateFieldSet: () => __classPrivateFieldSet4,
+  __createBinding: () => __createBinding4,
+  __decorate: () => __decorate4,
+  __disposeResources: () => __disposeResources4,
+  __esDecorate: () => __esDecorate4,
+  __exportStar: () => __exportStar4,
+  __extends: () => __extends4,
+  __generator: () => __generator4,
+  __importDefault: () => __importDefault4,
+  __importStar: () => __importStar4,
+  __makeTemplateObject: () => __makeTemplateObject4,
+  __metadata: () => __metadata4,
+  __param: () => __param4,
+  __propKey: () => __propKey4,
+  __read: () => __read4,
+  __rest: () => __rest4,
+  __runInitializers: () => __runInitializers4,
+  __setFunctionName: () => __setFunctionName4,
+  __spread: () => __spread4,
+  __spreadArray: () => __spreadArray4,
+  __spreadArrays: () => __spreadArrays4,
+  __values: () => __values4,
+  default: () => tslib_es6_default4
+});
+function __extends4(d, b) {
+  if (typeof b !== "function" && b !== null)
+    throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+  extendStatics4(d, b);
+  function __() {
+    this.constructor = d;
+  }
+  __name(__, "__");
+  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+function __rest4(s, e) {
+  var t = {};
+  for (var p in s)
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+      t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+        t[p[i]] = s[p[i]];
+    }
+  return t;
+}
+function __decorate4(decorators, target, key, desc) {
+  var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    r = Reflect.decorate(decorators, target, key, desc);
+  else
+    for (var i = decorators.length - 1; i >= 0; i--)
+      if (d = decorators[i])
+        r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function __param4(paramIndex, decorator) {
+  return function(target, key) {
+    decorator(target, key, paramIndex);
+  };
+}
+function __esDecorate4(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+  function accept(f) {
+    if (f !== void 0 && typeof f !== "function")
+      throw new TypeError("Function expected");
+    return f;
+  }
+  __name(accept, "accept");
+  var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+  var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+  var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+  var _, done = false;
+  for (var i = decorators.length - 1; i >= 0; i--) {
+    var context = {};
+    for (var p in contextIn)
+      context[p] = p === "access" ? {} : contextIn[p];
+    for (var p in contextIn.access)
+      context.access[p] = contextIn.access[p];
+    context.addInitializer = function(f) {
+      if (done)
+        throw new TypeError("Cannot add initializers after decoration has completed");
+      extraInitializers.push(accept(f || null));
+    };
+    var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
+    if (kind === "accessor") {
+      if (result === void 0)
+        continue;
+      if (result === null || typeof result !== "object")
+        throw new TypeError("Object expected");
+      if (_ = accept(result.get))
+        descriptor.get = _;
+      if (_ = accept(result.set))
+        descriptor.set = _;
+      if (_ = accept(result.init))
+        initializers.unshift(_);
+    } else if (_ = accept(result)) {
+      if (kind === "field")
+        initializers.unshift(_);
+      else
+        descriptor[key] = _;
+    }
+  }
+  if (target)
+    Object.defineProperty(target, contextIn.name, descriptor);
+  done = true;
+}
+function __runInitializers4(thisArg, initializers, value) {
+  var useValue = arguments.length > 2;
+  for (var i = 0; i < initializers.length; i++) {
+    value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+  }
+  return useValue ? value : void 0;
+}
+function __propKey4(x) {
+  return typeof x === "symbol" ? x : "".concat(x);
+}
+function __setFunctionName4(f, name, prefix) {
+  if (typeof name === "symbol")
+    name = name.description ? "[".concat(name.description, "]") : "";
+  return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
+}
+function __metadata4(metadataKey, metadataValue) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    return Reflect.metadata(metadataKey, metadataValue);
+}
+function __awaiter4(thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function(resolve) {
+      resolve(value);
+    });
+  }
+  __name(adopt, "adopt");
+  return new (P || (P = Promise))(function(resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+    __name(fulfilled, "fulfilled");
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+    __name(rejected, "rejected");
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+    __name(step, "step");
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+}
+function __generator4(thisArg, body) {
+  var _ = { label: 0, sent: function() {
+    if (t[0] & 1)
+      throw t[1];
+    return t[1];
+  }, trys: [], ops: [] }, f, y, t, g;
+  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+    return this;
+  }), g;
+  function verb(n) {
+    return function(v) {
+      return step([n, v]);
+    };
+  }
+  __name(verb, "verb");
+  function step(op) {
+    if (f)
+      throw new TypeError("Generator is already executing.");
+    while (g && (g = 0, op[0] && (_ = 0)), _)
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+          return t;
+        if (y = 0, t)
+          op = [op[0] & 2, t.value];
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+          case 4:
+            _.label++;
+            return { value: op[1], done: false };
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+          case 7:
+            op = _.ops.pop();
+            _.trys.pop();
+            continue;
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+              _.ops.push(op);
+              break;
+            }
+            if (t[2])
+              _.ops.pop();
+            _.trys.pop();
+            continue;
+        }
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    if (op[0] & 5)
+      throw op[1];
+    return { value: op[0] ? op[1] : void 0, done: true };
+  }
+  __name(step, "step");
+}
+function __exportStar4(m, o) {
+  for (var p in m)
+    if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p))
+      __createBinding4(o, m, p);
+}
+function __values4(o) {
+  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+  if (m)
+    return m.call(o);
+  if (o && typeof o.length === "number")
+    return {
+      next: function() {
+        if (o && i >= o.length)
+          o = void 0;
+        return { value: o && o[i++], done: !o };
+      }
+    };
+  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+}
+function __read4(o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m)
+    return o;
+  var i = m.call(o), r, ar = [], e;
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
+      ar.push(r.value);
+  } catch (error) {
+    e = { error };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"]))
+        m.call(i);
+    } finally {
+      if (e)
+        throw e.error;
+    }
+  }
+  return ar;
+}
+function __spread4() {
+  for (var ar = [], i = 0; i < arguments.length; i++)
+    ar = ar.concat(__read4(arguments[i]));
+  return ar;
+}
+function __spreadArrays4() {
+  for (var s = 0, i = 0, il = arguments.length; i < il; i++)
+    s += arguments[i].length;
+  for (var r = Array(s), k = 0, i = 0; i < il; i++)
+    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+      r[k] = a[j];
+  return r;
+}
+function __spreadArray4(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
+      }
+    }
+  return to.concat(ar || Array.prototype.slice.call(from));
+}
+function __await4(v) {
+  return this instanceof __await4 ? (this.v = v, this) : new __await4(v);
+}
+function __asyncGenerator4(thisArg, _arguments, generator) {
+  if (!Symbol.asyncIterator)
+    throw new TypeError("Symbol.asyncIterator is not defined.");
+  var g = generator.apply(thisArg, _arguments || []), i, q = [];
+  return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i;
+  function verb(n) {
+    if (g[n])
+      i[n] = function(v) {
+        return new Promise(function(a, b) {
+          q.push([n, v, a, b]) > 1 || resume(n, v);
+        });
+      };
+  }
+  __name(verb, "verb");
+  function resume(n, v) {
+    try {
+      step(g[n](v));
+    } catch (e) {
+      settle(q[0][3], e);
+    }
+  }
+  __name(resume, "resume");
+  function step(r) {
+    r.value instanceof __await4 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+  }
+  __name(step, "step");
+  function fulfill(value) {
+    resume("next", value);
+  }
+  __name(fulfill, "fulfill");
+  function reject(value) {
+    resume("throw", value);
+  }
+  __name(reject, "reject");
+  function settle(f, v) {
+    if (f(v), q.shift(), q.length)
+      resume(q[0][0], q[0][1]);
+  }
+  __name(settle, "settle");
+}
+function __asyncDelegator4(o) {
+  var i, p;
+  return i = {}, verb("next"), verb("throw", function(e) {
+    throw e;
+  }), verb("return"), i[Symbol.iterator] = function() {
+    return this;
+  }, i;
+  function verb(n, f) {
+    i[n] = o[n] ? function(v) {
+      return (p = !p) ? { value: __await4(o[n](v)), done: false } : f ? f(v) : v;
+    } : f;
+  }
+  __name(verb, "verb");
+}
+function __asyncValues4(o) {
+  if (!Symbol.asyncIterator)
+    throw new TypeError("Symbol.asyncIterator is not defined.");
+  var m = o[Symbol.asyncIterator], i;
+  return m ? m.call(o) : (o = typeof __values4 === "function" ? __values4(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i);
+  function verb(n) {
+    i[n] = o[n] && function(v) {
+      return new Promise(function(resolve, reject) {
+        v = o[n](v), settle(resolve, reject, v.done, v.value);
+      });
+    };
+  }
+  __name(verb, "verb");
+  function settle(resolve, reject, d, v) {
+    Promise.resolve(v).then(function(v2) {
+      resolve({ value: v2, done: d });
+    }, reject);
+  }
+  __name(settle, "settle");
+}
+function __makeTemplateObject4(cooked, raw) {
+  if (Object.defineProperty) {
+    Object.defineProperty(cooked, "raw", { value: raw });
+  } else {
+    cooked.raw = raw;
+  }
+  return cooked;
+}
+function __importStar4(mod) {
+  if (mod && mod.__esModule)
+    return mod;
+  var result = {};
+  if (mod != null) {
+    for (var k in mod)
+      if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+        __createBinding4(result, mod, k);
+  }
+  __setModuleDefault4(result, mod);
+  return result;
+}
+function __importDefault4(mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+}
+function __classPrivateFieldGet4(receiver, state, kind, f) {
+  if (kind === "a" && !f)
+    throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+    throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+}
+function __classPrivateFieldSet4(receiver, state, value, kind, f) {
+  if (kind === "m")
+    throw new TypeError("Private method is not writable");
+  if (kind === "a" && !f)
+    throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+    throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+}
+function __classPrivateFieldIn4(state, receiver) {
+  if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function")
+    throw new TypeError("Cannot use 'in' operator on non-object");
+  return typeof state === "function" ? receiver === state : state.has(receiver);
+}
+function __addDisposableResource4(env, value, async) {
+  if (value !== null && value !== void 0) {
+    if (typeof value !== "object" && typeof value !== "function")
+      throw new TypeError("Object expected.");
+    var dispose;
+    if (async) {
+      if (!Symbol.asyncDispose)
+        throw new TypeError("Symbol.asyncDispose is not defined.");
+      dispose = value[Symbol.asyncDispose];
+    }
+    if (dispose === void 0) {
+      if (!Symbol.dispose)
+        throw new TypeError("Symbol.dispose is not defined.");
+      dispose = value[Symbol.dispose];
+    }
+    if (typeof dispose !== "function")
+      throw new TypeError("Object not disposable.");
+    env.stack.push({ value, dispose, async });
+  } else if (async) {
+    env.stack.push({ async: true });
+  }
+  return value;
+}
+function __disposeResources4(env) {
+  function fail(e) {
+    env.error = env.hasError ? new _SuppressedError4(e, env.error, "An error was suppressed during disposal.") : e;
+    env.hasError = true;
+  }
+  __name(fail, "fail");
+  function next() {
+    while (env.stack.length) {
+      var rec = env.stack.pop();
+      try {
+        var result = rec.dispose && rec.dispose.call(rec.value);
+        if (rec.async)
+          return Promise.resolve(result).then(next, function(e) {
+            fail(e);
+            return next();
+          });
+      } catch (e) {
+        fail(e);
+      }
+    }
+    if (env.hasError)
+      throw env.error;
+  }
+  __name(next, "next");
+  return next();
+}
+var extendStatics4, __assign4, __createBinding4, __setModuleDefault4, _SuppressedError4, tslib_es6_default4;
+var init_tslib_es64 = __esm({
+  "node_modules/react-remove-scroll-bar/node_modules/tslib/tslib.es6.mjs"() {
+    extendStatics4 = /* @__PURE__ */ __name(function(d, b) {
+      extendStatics4 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+        d2.__proto__ = b2;
+      } || function(d2, b2) {
+        for (var p in b2)
+          if (Object.prototype.hasOwnProperty.call(b2, p))
+            d2[p] = b2[p];
+      };
+      return extendStatics4(d, b);
+    }, "extendStatics");
+    __name(__extends4, "__extends");
+    __assign4 = /* @__PURE__ */ __name(function() {
+      __assign4 = Object.assign || /* @__PURE__ */ __name(function __assign6(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+          s = arguments[i];
+          for (var p in s)
+            if (Object.prototype.hasOwnProperty.call(s, p))
+              t[p] = s[p];
+        }
+        return t;
+      }, "__assign");
+      return __assign4.apply(this, arguments);
+    }, "__assign");
+    __name(__rest4, "__rest");
+    __name(__decorate4, "__decorate");
+    __name(__param4, "__param");
+    __name(__esDecorate4, "__esDecorate");
+    __name(__runInitializers4, "__runInitializers");
+    __name(__propKey4, "__propKey");
+    __name(__setFunctionName4, "__setFunctionName");
+    __name(__metadata4, "__metadata");
+    __name(__awaiter4, "__awaiter");
+    __name(__generator4, "__generator");
+    __createBinding4 = Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    };
+    __name(__exportStar4, "__exportStar");
+    __name(__values4, "__values");
+    __name(__read4, "__read");
+    __name(__spread4, "__spread");
+    __name(__spreadArrays4, "__spreadArrays");
+    __name(__spreadArray4, "__spreadArray");
+    __name(__await4, "__await");
+    __name(__asyncGenerator4, "__asyncGenerator");
+    __name(__asyncDelegator4, "__asyncDelegator");
+    __name(__asyncValues4, "__asyncValues");
+    __name(__makeTemplateObject4, "__makeTemplateObject");
+    __setModuleDefault4 = Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    };
+    __name(__importStar4, "__importStar");
+    __name(__importDefault4, "__importDefault");
+    __name(__classPrivateFieldGet4, "__classPrivateFieldGet");
+    __name(__classPrivateFieldSet4, "__classPrivateFieldSet");
+    __name(__classPrivateFieldIn4, "__classPrivateFieldIn");
+    __name(__addDisposableResource4, "__addDisposableResource");
+    _SuppressedError4 = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+      var e = new Error(message);
+      return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+    };
+    __name(__disposeResources4, "__disposeResources");
+    tslib_es6_default4 = {
+      __extends: __extends4,
+      __assign: __assign4,
+      __rest: __rest4,
+      __decorate: __decorate4,
+      __param: __param4,
+      __metadata: __metadata4,
+      __awaiter: __awaiter4,
+      __generator: __generator4,
+      __createBinding: __createBinding4,
+      __exportStar: __exportStar4,
+      __values: __values4,
+      __read: __read4,
+      __spread: __spread4,
+      __spreadArrays: __spreadArrays4,
+      __spreadArray: __spreadArray4,
+      __await: __await4,
+      __asyncGenerator: __asyncGenerator4,
+      __asyncDelegator: __asyncDelegator4,
+      __asyncValues: __asyncValues4,
+      __makeTemplateObject: __makeTemplateObject4,
+      __importStar: __importStar4,
+      __importDefault: __importDefault4,
+      __classPrivateFieldGet: __classPrivateFieldGet4,
+      __classPrivateFieldSet: __classPrivateFieldSet4,
+      __classPrivateFieldIn: __classPrivateFieldIn4,
+      __addDisposableResource: __addDisposableResource4,
+      __disposeResources: __disposeResources4
+    };
+  }
+});
+
+// node_modules/react-style-singleton/node_modules/tslib/tslib.es6.mjs
+var tslib_es6_exports5 = {};
+__export(tslib_es6_exports5, {
+  __addDisposableResource: () => __addDisposableResource5,
+  __assign: () => __assign5,
+  __asyncDelegator: () => __asyncDelegator5,
+  __asyncGenerator: () => __asyncGenerator5,
+  __asyncValues: () => __asyncValues5,
+  __await: () => __await5,
+  __awaiter: () => __awaiter5,
+  __classPrivateFieldGet: () => __classPrivateFieldGet5,
+  __classPrivateFieldIn: () => __classPrivateFieldIn5,
+  __classPrivateFieldSet: () => __classPrivateFieldSet5,
+  __createBinding: () => __createBinding5,
+  __decorate: () => __decorate5,
+  __disposeResources: () => __disposeResources5,
+  __esDecorate: () => __esDecorate5,
+  __exportStar: () => __exportStar5,
+  __extends: () => __extends5,
+  __generator: () => __generator5,
+  __importDefault: () => __importDefault5,
+  __importStar: () => __importStar5,
+  __makeTemplateObject: () => __makeTemplateObject5,
+  __metadata: () => __metadata5,
+  __param: () => __param5,
+  __propKey: () => __propKey5,
+  __read: () => __read5,
+  __rest: () => __rest5,
+  __runInitializers: () => __runInitializers5,
+  __setFunctionName: () => __setFunctionName5,
+  __spread: () => __spread5,
+  __spreadArray: () => __spreadArray5,
+  __spreadArrays: () => __spreadArrays5,
+  __values: () => __values5,
+  default: () => tslib_es6_default5
+});
+function __extends5(d, b) {
+  if (typeof b !== "function" && b !== null)
+    throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+  extendStatics5(d, b);
+  function __() {
+    this.constructor = d;
+  }
+  __name(__, "__");
+  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+function __rest5(s, e) {
+  var t = {};
+  for (var p in s)
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+      t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+        t[p[i]] = s[p[i]];
+    }
+  return t;
+}
+function __decorate5(decorators, target, key, desc) {
+  var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    r = Reflect.decorate(decorators, target, key, desc);
+  else
+    for (var i = decorators.length - 1; i >= 0; i--)
+      if (d = decorators[i])
+        r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function __param5(paramIndex, decorator) {
+  return function(target, key) {
+    decorator(target, key, paramIndex);
+  };
+}
+function __esDecorate5(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+  function accept(f) {
+    if (f !== void 0 && typeof f !== "function")
+      throw new TypeError("Function expected");
+    return f;
+  }
+  __name(accept, "accept");
+  var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+  var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+  var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+  var _, done = false;
+  for (var i = decorators.length - 1; i >= 0; i--) {
+    var context = {};
+    for (var p in contextIn)
+      context[p] = p === "access" ? {} : contextIn[p];
+    for (var p in contextIn.access)
+      context.access[p] = contextIn.access[p];
+    context.addInitializer = function(f) {
+      if (done)
+        throw new TypeError("Cannot add initializers after decoration has completed");
+      extraInitializers.push(accept(f || null));
+    };
+    var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
+    if (kind === "accessor") {
+      if (result === void 0)
+        continue;
+      if (result === null || typeof result !== "object")
+        throw new TypeError("Object expected");
+      if (_ = accept(result.get))
+        descriptor.get = _;
+      if (_ = accept(result.set))
+        descriptor.set = _;
+      if (_ = accept(result.init))
+        initializers.unshift(_);
+    } else if (_ = accept(result)) {
+      if (kind === "field")
+        initializers.unshift(_);
+      else
+        descriptor[key] = _;
+    }
+  }
+  if (target)
+    Object.defineProperty(target, contextIn.name, descriptor);
+  done = true;
+}
+function __runInitializers5(thisArg, initializers, value) {
+  var useValue = arguments.length > 2;
+  for (var i = 0; i < initializers.length; i++) {
+    value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+  }
+  return useValue ? value : void 0;
+}
+function __propKey5(x) {
+  return typeof x === "symbol" ? x : "".concat(x);
+}
+function __setFunctionName5(f, name, prefix) {
+  if (typeof name === "symbol")
+    name = name.description ? "[".concat(name.description, "]") : "";
+  return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
+}
+function __metadata5(metadataKey, metadataValue) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    return Reflect.metadata(metadataKey, metadataValue);
+}
+function __awaiter5(thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function(resolve) {
+      resolve(value);
+    });
+  }
+  __name(adopt, "adopt");
+  return new (P || (P = Promise))(function(resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+    __name(fulfilled, "fulfilled");
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+    __name(rejected, "rejected");
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+    __name(step, "step");
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+}
+function __generator5(thisArg, body) {
+  var _ = { label: 0, sent: function() {
+    if (t[0] & 1)
+      throw t[1];
+    return t[1];
+  }, trys: [], ops: [] }, f, y, t, g;
+  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+    return this;
+  }), g;
+  function verb(n) {
+    return function(v) {
+      return step([n, v]);
+    };
+  }
+  __name(verb, "verb");
+  function step(op) {
+    if (f)
+      throw new TypeError("Generator is already executing.");
+    while (g && (g = 0, op[0] && (_ = 0)), _)
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+          return t;
+        if (y = 0, t)
+          op = [op[0] & 2, t.value];
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+          case 4:
+            _.label++;
+            return { value: op[1], done: false };
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+          case 7:
+            op = _.ops.pop();
+            _.trys.pop();
+            continue;
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+              _.ops.push(op);
+              break;
+            }
+            if (t[2])
+              _.ops.pop();
+            _.trys.pop();
+            continue;
+        }
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    if (op[0] & 5)
+      throw op[1];
+    return { value: op[0] ? op[1] : void 0, done: true };
+  }
+  __name(step, "step");
+}
+function __exportStar5(m, o) {
+  for (var p in m)
+    if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p))
+      __createBinding5(o, m, p);
+}
+function __values5(o) {
+  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+  if (m)
+    return m.call(o);
+  if (o && typeof o.length === "number")
+    return {
+      next: function() {
+        if (o && i >= o.length)
+          o = void 0;
+        return { value: o && o[i++], done: !o };
+      }
+    };
+  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+}
+function __read5(o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m)
+    return o;
+  var i = m.call(o), r, ar = [], e;
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
+      ar.push(r.value);
+  } catch (error) {
+    e = { error };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"]))
+        m.call(i);
+    } finally {
+      if (e)
+        throw e.error;
+    }
+  }
+  return ar;
+}
+function __spread5() {
+  for (var ar = [], i = 0; i < arguments.length; i++)
+    ar = ar.concat(__read5(arguments[i]));
+  return ar;
+}
+function __spreadArrays5() {
+  for (var s = 0, i = 0, il = arguments.length; i < il; i++)
+    s += arguments[i].length;
+  for (var r = Array(s), k = 0, i = 0; i < il; i++)
+    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+      r[k] = a[j];
+  return r;
+}
+function __spreadArray5(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
+      }
+    }
+  return to.concat(ar || Array.prototype.slice.call(from));
+}
+function __await5(v) {
+  return this instanceof __await5 ? (this.v = v, this) : new __await5(v);
+}
+function __asyncGenerator5(thisArg, _arguments, generator) {
+  if (!Symbol.asyncIterator)
+    throw new TypeError("Symbol.asyncIterator is not defined.");
+  var g = generator.apply(thisArg, _arguments || []), i, q = [];
+  return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i;
+  function verb(n) {
+    if (g[n])
+      i[n] = function(v) {
+        return new Promise(function(a, b) {
+          q.push([n, v, a, b]) > 1 || resume(n, v);
+        });
+      };
+  }
+  __name(verb, "verb");
+  function resume(n, v) {
+    try {
+      step(g[n](v));
+    } catch (e) {
+      settle(q[0][3], e);
+    }
+  }
+  __name(resume, "resume");
+  function step(r) {
+    r.value instanceof __await5 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+  }
+  __name(step, "step");
+  function fulfill(value) {
+    resume("next", value);
+  }
+  __name(fulfill, "fulfill");
+  function reject(value) {
+    resume("throw", value);
+  }
+  __name(reject, "reject");
+  function settle(f, v) {
+    if (f(v), q.shift(), q.length)
+      resume(q[0][0], q[0][1]);
+  }
+  __name(settle, "settle");
+}
+function __asyncDelegator5(o) {
+  var i, p;
+  return i = {}, verb("next"), verb("throw", function(e) {
+    throw e;
+  }), verb("return"), i[Symbol.iterator] = function() {
+    return this;
+  }, i;
+  function verb(n, f) {
+    i[n] = o[n] ? function(v) {
+      return (p = !p) ? { value: __await5(o[n](v)), done: false } : f ? f(v) : v;
+    } : f;
+  }
+  __name(verb, "verb");
+}
+function __asyncValues5(o) {
+  if (!Symbol.asyncIterator)
+    throw new TypeError("Symbol.asyncIterator is not defined.");
+  var m = o[Symbol.asyncIterator], i;
+  return m ? m.call(o) : (o = typeof __values5 === "function" ? __values5(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i);
+  function verb(n) {
+    i[n] = o[n] && function(v) {
+      return new Promise(function(resolve, reject) {
+        v = o[n](v), settle(resolve, reject, v.done, v.value);
+      });
+    };
+  }
+  __name(verb, "verb");
+  function settle(resolve, reject, d, v) {
+    Promise.resolve(v).then(function(v2) {
+      resolve({ value: v2, done: d });
+    }, reject);
+  }
+  __name(settle, "settle");
+}
+function __makeTemplateObject5(cooked, raw) {
+  if (Object.defineProperty) {
+    Object.defineProperty(cooked, "raw", { value: raw });
+  } else {
+    cooked.raw = raw;
+  }
+  return cooked;
+}
+function __importStar5(mod) {
+  if (mod && mod.__esModule)
+    return mod;
+  var result = {};
+  if (mod != null) {
+    for (var k in mod)
+      if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+        __createBinding5(result, mod, k);
+  }
+  __setModuleDefault5(result, mod);
+  return result;
+}
+function __importDefault5(mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+}
+function __classPrivateFieldGet5(receiver, state, kind, f) {
+  if (kind === "a" && !f)
+    throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+    throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+}
+function __classPrivateFieldSet5(receiver, state, value, kind, f) {
+  if (kind === "m")
+    throw new TypeError("Private method is not writable");
+  if (kind === "a" && !f)
+    throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
+    throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+}
+function __classPrivateFieldIn5(state, receiver) {
+  if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function")
+    throw new TypeError("Cannot use 'in' operator on non-object");
+  return typeof state === "function" ? receiver === state : state.has(receiver);
+}
+function __addDisposableResource5(env, value, async) {
+  if (value !== null && value !== void 0) {
+    if (typeof value !== "object" && typeof value !== "function")
+      throw new TypeError("Object expected.");
+    var dispose;
+    if (async) {
+      if (!Symbol.asyncDispose)
+        throw new TypeError("Symbol.asyncDispose is not defined.");
+      dispose = value[Symbol.asyncDispose];
+    }
+    if (dispose === void 0) {
+      if (!Symbol.dispose)
+        throw new TypeError("Symbol.dispose is not defined.");
+      dispose = value[Symbol.dispose];
+    }
+    if (typeof dispose !== "function")
+      throw new TypeError("Object not disposable.");
+    env.stack.push({ value, dispose, async });
+  } else if (async) {
+    env.stack.push({ async: true });
+  }
+  return value;
+}
+function __disposeResources5(env) {
+  function fail(e) {
+    env.error = env.hasError ? new _SuppressedError5(e, env.error, "An error was suppressed during disposal.") : e;
+    env.hasError = true;
+  }
+  __name(fail, "fail");
+  function next() {
+    while (env.stack.length) {
+      var rec = env.stack.pop();
+      try {
+        var result = rec.dispose && rec.dispose.call(rec.value);
+        if (rec.async)
+          return Promise.resolve(result).then(next, function(e) {
+            fail(e);
+            return next();
+          });
+      } catch (e) {
+        fail(e);
+      }
+    }
+    if (env.hasError)
+      throw env.error;
+  }
+  __name(next, "next");
+  return next();
+}
+var extendStatics5, __assign5, __createBinding5, __setModuleDefault5, _SuppressedError5, tslib_es6_default5;
+var init_tslib_es65 = __esm({
+  "node_modules/react-style-singleton/node_modules/tslib/tslib.es6.mjs"() {
+    extendStatics5 = /* @__PURE__ */ __name(function(d, b) {
+      extendStatics5 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+        d2.__proto__ = b2;
+      } || function(d2, b2) {
+        for (var p in b2)
+          if (Object.prototype.hasOwnProperty.call(b2, p))
+            d2[p] = b2[p];
+      };
+      return extendStatics5(d, b);
+    }, "extendStatics");
+    __name(__extends5, "__extends");
+    __assign5 = /* @__PURE__ */ __name(function() {
+      __assign5 = Object.assign || /* @__PURE__ */ __name(function __assign6(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+          s = arguments[i];
+          for (var p in s)
+            if (Object.prototype.hasOwnProperty.call(s, p))
+              t[p] = s[p];
+        }
+        return t;
+      }, "__assign");
+      return __assign5.apply(this, arguments);
+    }, "__assign");
+    __name(__rest5, "__rest");
+    __name(__decorate5, "__decorate");
+    __name(__param5, "__param");
+    __name(__esDecorate5, "__esDecorate");
+    __name(__runInitializers5, "__runInitializers");
+    __name(__propKey5, "__propKey");
+    __name(__setFunctionName5, "__setFunctionName");
+    __name(__metadata5, "__metadata");
+    __name(__awaiter5, "__awaiter");
+    __name(__generator5, "__generator");
+    __createBinding5 = Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    };
+    __name(__exportStar5, "__exportStar");
+    __name(__values5, "__values");
+    __name(__read5, "__read");
+    __name(__spread5, "__spread");
+    __name(__spreadArrays5, "__spreadArrays");
+    __name(__spreadArray5, "__spreadArray");
+    __name(__await5, "__await");
+    __name(__asyncGenerator5, "__asyncGenerator");
+    __name(__asyncDelegator5, "__asyncDelegator");
+    __name(__asyncValues5, "__asyncValues");
+    __name(__makeTemplateObject5, "__makeTemplateObject");
+    __setModuleDefault5 = Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    };
+    __name(__importStar5, "__importStar");
+    __name(__importDefault5, "__importDefault");
+    __name(__classPrivateFieldGet5, "__classPrivateFieldGet");
+    __name(__classPrivateFieldSet5, "__classPrivateFieldSet");
+    __name(__classPrivateFieldIn5, "__classPrivateFieldIn");
+    __name(__addDisposableResource5, "__addDisposableResource");
+    _SuppressedError5 = typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+      var e = new Error(message);
+      return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+    };
+    __name(__disposeResources5, "__disposeResources");
+    tslib_es6_default5 = {
+      __extends: __extends5,
+      __assign: __assign5,
+      __rest: __rest5,
+      __decorate: __decorate5,
+      __param: __param5,
+      __metadata: __metadata5,
+      __awaiter: __awaiter5,
+      __generator: __generator5,
+      __createBinding: __createBinding5,
+      __exportStar: __exportStar5,
+      __values: __values5,
+      __read: __read5,
+      __spread: __spread5,
+      __spreadArrays: __spreadArrays5,
+      __spreadArray: __spreadArray5,
+      __await: __await5,
+      __asyncGenerator: __asyncGenerator5,
+      __asyncDelegator: __asyncDelegator5,
+      __asyncValues: __asyncValues5,
+      __makeTemplateObject: __makeTemplateObject5,
+      __importStar: __importStar5,
+      __importDefault: __importDefault5,
+      __classPrivateFieldGet: __classPrivateFieldGet5,
+      __classPrivateFieldSet: __classPrivateFieldSet5,
+      __classPrivateFieldIn: __classPrivateFieldIn5,
+      __addDisposableResource: __addDisposableResource5,
+      __disposeResources: __disposeResources5
+    };
+  }
+});
+
 // node_modules/get-nonce/dist/es5/index.js
 var require_es54 = __commonJS({
   "node_modules/get-nonce/dist/es5/index.js"(exports2) {
@@ -5732,7 +7075,7 @@ var require_hook2 = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.styleHookSingleton = void 0;
-    var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
+    var tslib_1 = (init_tslib_es65(), __toCommonJS(tslib_es6_exports5));
     var React40 = tslib_1.__importStar(require("react"));
     var singleton_1 = require_singleton();
     var styleHookSingleton = /* @__PURE__ */ __name(function() {
@@ -5840,7 +7183,7 @@ var require_component2 = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.RemoveScrollBar = void 0;
-    var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
+    var tslib_1 = (init_tslib_es64(), __toCommonJS(tslib_es6_exports4));
     var React40 = tslib_1.__importStar(require("react"));
     var react_style_singleton_1 = require_es55();
     var constants_1 = require_constants2();
@@ -27840,8 +29183,8 @@ var require_cjs27 = __commonJS({
 var require_arrayToTree_min = __commonJS({
   "node_modules/performant-array-to-tree/build/arrayToTree.min.js"(exports2) {
     "use strict";
-    var __assign4 = exports2 && exports2.__assign || function() {
-      return (__assign4 = Object.assign || function(e) {
+    var __assign6 = exports2 && exports2.__assign || function() {
+      return (__assign6 = Object.assign || function(e) {
         for (var r, t = 1, n = arguments.length; t < n; t++)
           for (var o in r = arguments[t])
             Object.prototype.hasOwnProperty.call(r, o) && (e[o] = r[o]);
@@ -27851,13 +29194,13 @@ var require_arrayToTree_min = __commonJS({
     var defaultConfig = (Object.defineProperty(exports2, "__esModule", { value: true }), { id: "id", parentId: "parentId", dataField: "data", childrenField: "children", throwIfOrphans: false, rootParentIds: { "": !(exports2.countNodes = exports2.arrayToTree = void 0) }, nestedIds: true, assign: false });
     function arrayToTree(c, e) {
       void 0 === e && (e = {});
-      for (var r, t = __assign4(__assign4({}, defaultConfig), e), n = [], o = {}, a = t.throwIfOrphans ? /* @__PURE__ */ new Set() : null, s = 0, h = c; s < h.length; s++) {
+      for (var r, t = __assign6(__assign6({}, defaultConfig), e), n = [], o = {}, a = t.throwIfOrphans ? /* @__PURE__ */ new Set() : null, s = 0, h = c; s < h.length; s++) {
         var i = h[s], d = t.nestedIds ? getNestedProperty(i, t.id) : i[t.id], l = t.nestedIds ? getNestedProperty(i, t.parentId) : i[t.parentId];
         if (t.rootParentIds[d])
           throw new Error("The item array contains a node whose parentId both exists in another node and is in " + '`rootParentIds` (`itemId`: "'.concat(d, '", `rootParentIds`: ').concat(Object.keys(t.rootParentIds).map(function(e2) {
             return '"'.concat(e2, '"');
           }).join(", "), ")."));
-        Object.prototype.hasOwnProperty.call(o, d) || (o[d] = ((r = {})[t.childrenField] = [], r)), a && a.delete(d), t.dataField ? o[d][t.dataField] = i : t.assign ? o[d] = Object.assign(i, ((r = {})[t.childrenField] = o[d][t.childrenField], r)) : o[d] = __assign4(__assign4({}, i), ((i = {})[t.childrenField] = o[d][t.childrenField], i));
+        Object.prototype.hasOwnProperty.call(o, d) || (o[d] = ((r = {})[t.childrenField] = [], r)), a && a.delete(d), t.dataField ? o[d][t.dataField] = i : t.assign ? o[d] = Object.assign(i, ((r = {})[t.childrenField] = o[d][t.childrenField], r)) : o[d] = __assign6(__assign6({}, i), ((i = {})[t.childrenField] = o[d][t.childrenField], i));
         i = o[d];
         null == l || t.rootParentIds[l] ? n.push(i) : (Object.prototype.hasOwnProperty.call(o, l) || (o[l] = ((d = {})[t.childrenField] = [], d), a && a.add(l)), o[l][t.childrenField].push(i));
       }
@@ -32430,9 +33773,21 @@ var DialogPortal = /* @__PURE__ */ __name((props) => {
       children: isShowing ? children : null
     }
   );
-  return useShowDialogSheet(context) ? children : context.modal ? isFullyHidden ? null : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(DialogPortalItem, { __scopeDialog, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PortalProvider2, { scope: __scopeDialog, forceMount, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(DialogPortalFrame, { pointerEvents: isShowing ? "auto" : "none", ...frameProps, children: contents }) }) }) : contents;
+  if (useShowDialogSheet(context))
+    return children;
+  if (context.modal) {
+    if (isFullyHidden)
+      return null;
+    const framedContents = /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PortalProvider2, { scope: __scopeDialog, forceMount, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(DialogPortalFrame, { pointerEvents: isShowing ? "auto" : "none", ...frameProps, children: contents }) });
+    return isWeb ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Portal, { zIndex: props.zIndex ?? 1e5, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(PassthroughTheme, { children: framedContents }) }) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(DialogPortalItem, { __scopeDialog, children: framedContents });
+  }
+  return contents;
 }, "DialogPortal");
 DialogPortal.displayName = PORTAL_NAME;
+var PassthroughTheme = /* @__PURE__ */ __name(({ children }) => {
+  const themeName = (0, import_core13.useThemeName)();
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_core13.Theme, { name: themeName, forceClassName: true, children });
+}, "PassthroughTheme");
 var OVERLAY_NAME = "DialogOverlay";
 var DialogOverlayFrame = (0, import_core13.styled)(Overlay, {
   name: OVERLAY_NAME
@@ -38050,7 +39405,7 @@ function useFocus(context, props) {
             const activeEl = activeElement(domReference ? domReference.ownerDocument : document);
             if (!relatedTarget && activeEl === domReference)
               return;
-            if (contains(refs.floating.current, relatedTarget) || contains(domReference, relatedTarget) || movedToFocusGuard) {
+            if (contains(refs.floating.current, activeEl) || contains(domReference, activeEl) || movedToFocusGuard) {
               return;
             }
             onOpenChange(false, event.nativeEvent, "focus");
@@ -40425,7 +41780,6 @@ __name(useDebounceValue, "useDebounceValue");
 
 // node_modules/@tamagui/select/dist/esm/constants.js
 var SELECT_NAME = "Select";
-var WINDOW_PADDING = 8;
 var SCROLL_ARROW_THRESHOLD = 8;
 var VIEWPORT_NAME = "SelectViewport";
 
@@ -40510,12 +41864,12 @@ var SelectInlineImpl = /* @__PURE__ */ __name((props) => {
       document.removeEventListener("mouseup", mouseUp);
     };
   }, [open]);
-  const flipOrShiftMiddlewares = [
-    touch ? shift2({ crossAxis: true, padding: WINDOW_PADDING }) : flip2({ padding: WINDOW_PADDING })
-  ], { x, y, strategy, context, refs, update } = useFloating3({
+  const { x, y, strategy, context, refs, update } = useFloating3({
     open,
     onOpenChange: setOpen,
     placement: "bottom-start",
+    whileElementsMounted: autoUpdate,
+    // biome-ignore lint/correctness/noConstantCondition: <explanation>
     middleware: [
       size2({
         apply({
@@ -40523,18 +41877,17 @@ var SelectInlineImpl = /* @__PURE__ */ __name((props) => {
             reference: { width }
           }
         }) {
-          floatingStyle.current = {
+          Object.assign(floatingStyle.current, {
             minWidth: width + 8
-          };
+          }), refs.floating.current && Object.assign(refs.floating.current.style, floatingStyle.current);
         }
       }),
-      ...flipOrShiftMiddlewares,
       inner({
         listRef: listItemsRef,
         overflowRef,
         index: selectedIndex,
         offset: innerOffset,
-        // onFallbackChange: setFallback,
+        onFallbackChange: setFallback,
         padding: 10,
         minItemsVisible: touch ? 10 : 4,
         referenceOverflowThreshold: 20
@@ -40548,7 +41901,7 @@ var SelectInlineImpl = /* @__PURE__ */ __name((props) => {
     useDismiss(context, { outsidePress: false }),
     useRole(context, { role: "listbox" }),
     useInnerOffset(context, {
-      enabled: !fallback && (!!showUpArrow || !!showDownArrow),
+      enabled: !fallback,
       onChange: setInnerOffset,
       overflowRef,
       scrollRef: refs.floating
@@ -40609,7 +41962,9 @@ var SelectInlineImpl = /* @__PURE__ */ __name((props) => {
           e.preventDefault();
         },
         onScroll(event) {
-          (0, import_react_dom5.flushSync)(() => setScrollTop(event.currentTarget.scrollTop));
+          (0, import_react_dom5.flushSync)(() => {
+            setScrollTop(event.currentTarget.scrollTop);
+          });
         }
       });
     }
@@ -40940,6 +42295,8 @@ var SelectTrigger = React29.forwardRef(
       {
         componentName: TRIGGER_NAME4,
         unstyled,
+        tag: "button",
+        id: itemParentContext.id,
         ...!unstyled && {
           backgrounded: true,
           radiused: true,
@@ -40951,9 +42308,9 @@ var SelectTrigger = React29.forwardRef(
             outlineWidth: 2,
             outlineColor: "$outlineColor"
           },
-          borderWidth: 1
+          borderWidth: 1,
+          size: itemParentContext.size
         },
-        size: itemParentContext.size,
         "aria-expanded": context.open,
         "aria-autocomplete": "none",
         dir: context.dir,
@@ -41261,8 +42618,9 @@ var Select = withStaticProperties(
       disablePreventBodyScroll,
       size: sizeProp = "$true",
       onActiveChange,
-      dir
-    } = props, id = React30.useId(), scopeKey = __scopeSelect ? Object.keys(__scopeSelect)[0] ?? id : id, { when, AdaptProvider } = useAdaptParent({
+      dir,
+      id
+    } = props, internalId = React30.useId(), scopeKey = __scopeSelect ? Object.keys(__scopeSelect)[0] ?? internalId : internalId, { when, AdaptProvider } = useAdaptParent({
       Contents: React30.useCallback(
         () => /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(PortalHost, { name: `${scopeKey}SheetContents` }),
         [scopeKey]
@@ -41298,11 +42656,12 @@ var Select = withStaticProperties(
       SelectItemParentProvider,
       {
         scope: __scopeSelect,
-        initialValue: React30.useMemo(() => value, []),
+        initialValue: React30.useMemo(() => value, [open]),
         size: sizeProp,
         activeIndexSubscribe,
         valueSubscribe,
         setOpen,
+        id,
         onChange: React30.useCallback((val) => {
           setValue(val), emitValue(val);
         }, []),
