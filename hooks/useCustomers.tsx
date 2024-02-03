@@ -149,3 +149,7 @@ LIMIT 1;`;
 
   return { ...bestCustomer, type };
 };
+
+export const useCustomer = () => {
+  const [customer, setCustomer] = useState();
+};

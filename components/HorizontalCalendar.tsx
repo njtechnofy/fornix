@@ -74,6 +74,9 @@ const DateWidget = ({ item }: { item: CalendarDay }) => {
 };
 
 const RenderDay = ({ item }: { item: CalendarDay }) => {
+  //TODO
+  // const lastItemId = useRef<number>(props.id)
+  // const [active, setActive] = useState<boolean>(isActive);
   return (
     <YStack
       onPress={() => {

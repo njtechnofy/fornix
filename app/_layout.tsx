@@ -1,5 +1,5 @@
 import { Provider } from "@/components/Providers";
-import { updateLocation } from "@/store";
+import { updateLocation, useUserStore } from "@/store";
 import { NetInfoSubscription } from "@react-native-community/netinfo";
 import "react-native-reanimated";
 
@@ -14,7 +14,7 @@ import {
   startLocationUpdatesAsync,
   watchPositionAsync,
 } from "expo-location";
-import { SplashScreen, Stack } from "expo-router";
+import { Redirect, SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { Alert, Image } from "react-native";
 
@@ -132,6 +132,10 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const user = useUserStore((state) => state.userId);
+  if (!user) {
+    return <Redirect href="/login" />;
+  }
   return (
     <Provider>
       <Stack>
