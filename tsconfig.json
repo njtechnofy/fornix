@@ -30,8 +30,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "app/(app)/orders/[id]"  ],
+    "expo-env.d.ts" ],
   "exclude": [
     "node_modules/*"
   ]

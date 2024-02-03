@@ -13,7 +13,7 @@ export default function Login() {
   const theme = useColorScheme();
 
   if (userId) {
-    return <Redirect href="/(app)/(tabs)/dashboard" />;
+    return <Redirect href="/" />;
   }
 
   return (
@@ -29,14 +29,14 @@ export default function Login() {
             height="50%"
             width="100%"
             resizeMode="contain"
-            source={require("../assets/images/fornix-white.png")}
+            source={require("../../assets/images/fornix-white.png")}
           />
         ) : (
           <Image
             height="50%"
             width="90%"
             resizeMode="contain"
-            source={require("../assets/images/fornix.png")}
+            source={require("../../assets/images/fornix.png")}
           />
         )}
       </YStack>
@@ -53,7 +53,7 @@ export default function Login() {
               userId: "12w31",
               userName: "Agent 1",
             });
-            router.replace("/(app)/(tabs)");
+            router.replace("/");
           }}
         >
           LOGIN

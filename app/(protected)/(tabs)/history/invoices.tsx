@@ -38,7 +38,7 @@ import { Text, XStack, YStack } from "tamagui";
 //   </YStack>
 // );
 const renderItem = ({ item }: { item: InvoiceModel }) => (
-  <Link asChild href={`/(app)/_invoices/${item.id}`}>
+  <Link asChild href={`/_invoices/${item.id}`}>
     <XStack
       padding="$4"
       borderRadius={20}

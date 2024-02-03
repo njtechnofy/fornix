@@ -1,4 +1,3 @@
-import { getDaysOfPreviousMonths } from "@/constants/date-helper";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 import {
@@ -168,12 +167,6 @@ export const toggleSearchSheet = (searchSheet: boolean) => {
     closeSheet();
   }
 };
-
-export const useInitialCalendarStore = create<{
-  calendar: ReturnType<typeof getDaysOfPreviousMonths> | undefined;
-}>(() => ({
-  calendar: undefined,
-}));
 
 export const toggleGeofenceSheet = (geofence: boolean) => {
   if (geofence) {

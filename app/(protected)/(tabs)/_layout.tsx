@@ -109,7 +109,7 @@ export default function TabLayout() {
   const userId = useUserStore((state) => state.userId);
 
   if (!userId) {
-    return <Redirect href="/login" />;
+    return <Redirect href="/auth/login" />;
   }
 
   return (
@@ -126,12 +126,6 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            href: null,
-          }}
-        />
-        <Tabs.Screen
-          name="dashboard"
-          options={{
             title: "Dashboard",
 
             tabBarIcon: ({ color, size }) => (
@@ -142,6 +136,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="map"
           options={{
+            lazy: true,
             title: "Map",
             tabBarIcon: ({ color, size }) => <Map size={size} color={color} />,
           }}
@@ -177,7 +172,7 @@ export default function TabLayout() {
           name="tasks"
           options={{
             title: "Tasks",
-
+            lazy: true,
             tabBarIcon: ({ color, size }) => (
               <ListChecks size={size} color={color} />
             ),
@@ -187,6 +182,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="history"
           options={{
+            lazy: true,
             title: "History",
             tabBarIcon: ({ color, size }) => (
               <CalendarSearch size={size} color={color} />

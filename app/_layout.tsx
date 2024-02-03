@@ -1,5 +1,5 @@
 import { Provider } from "@/components/Providers";
-import { updateLocation, useUserStore } from "@/store";
+import { updateLocation } from "@/store";
 import { NetInfoSubscription } from "@react-native-community/netinfo";
 import "react-native-reanimated";
 
@@ -14,7 +14,7 @@ import {
   startLocationUpdatesAsync,
   watchPositionAsync,
 } from "expo-location";
-import { Redirect, SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { Alert, Image } from "react-native";
 
@@ -54,7 +54,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(app)",
+  initialRouteName: "(protected)",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -132,26 +132,13 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const user = useUserStore((state) => state.userId);
-  if (!user) {
-    return <Redirect href="/login" />;
-  }
   return (
     <Provider>
-      <Stack>
-        <Stack.Screen
-          options={{
-            headerShown: false,
-          }}
-          name="(app)"
-        />
-        <Stack.Screen
-          options={{
-            headerShown: false,
-          }}
-          name="login"
-        />
-      </Stack>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
     </Provider>
   );
 }

@@ -246,7 +246,7 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
           500
         );
       } else if (point.properties?.id) {
-        router.push(`/(app)/_customers/${point.properties.id}`);
+        router.push(`/_customers/${point.properties.id}`);
       }
     },
     [mapRef]

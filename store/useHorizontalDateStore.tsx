@@ -1,3 +1,4 @@
+import { computeCalendar } from "@/utils/worklets/getCalendarWorklet";
 import { FlashList } from "@shopify/flash-list";
 import { getDate, getDay, getMonth, getYear } from "date-fns";
 import { RefObject, createRef } from "react";
@@ -43,11 +44,11 @@ export const useHorizontalCalendarStore = create<{
   // isScrolling: boolean;
   initialScroll: number;
   highlight: CalendarDay;
-  calendarDays: CalendarDay[];
+  calendarDays?: CalendarDay[];
   filledCalendarDays?: CalendarDay[];
-
+  init: () => void;
   ref: RefObject<FlashList<CalendarDay[]>>;
-}>(() => {
+}>((set, get) => {
   const ref = createRef<FlashList<CalendarDay[]>>();
   const today = new Date();
   const date = getDate(today);
@@ -64,7 +65,15 @@ export const useHorizontalCalendarStore = create<{
     highlight: [year, month, date, day, 0],
     today,
     initialScroll,
-    calendarDays: [],
+    calendarDays: undefined,
     filledCalendarDays: undefined,
+    init: () => {
+      const { year, month } = get();
+      computeCalendar(year, month).then((data) => {
+        set({
+          calendarDays: JSON.parse(data),
+        });
+      });
+    },
   };
 });

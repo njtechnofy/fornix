@@ -66,7 +66,7 @@ export default function Product() {
     if (router.canGoBack()) {
       router.back();
     } else {
-      router.push("/(app)/(tabs)/dashboard");
+      router.push("/");
     }
   };
 
@@ -76,7 +76,7 @@ export default function Product() {
 
   const renderItem = ({ item }: { item: ProductOrderModel }) => {
     return (
-      <Link asChild href={`/(app)/_orders/${item.order.id}`}>
+      <Link asChild href={`/_orders/${item.order.id}/`}>
         <XStack
           padding="$4"
           borderRadius={20}

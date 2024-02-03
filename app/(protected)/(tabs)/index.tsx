@@ -96,8 +96,8 @@ function Stat({
           filter === "unpaid"
             ? "$orange8"
             : filter === "prospect"
-            ? "$blue8"
-            : `$gray${darkness + 2}`
+              ? "$blue8"
+              : `$gray${darkness + 2}`
         }
       >
         {count}
