@@ -1,6 +1,6 @@
 import { computeCalendar } from "@/utils/worklets/getCalendarWorklet";
 import { FlashList } from "@shopify/flash-list";
-import { getDate, getDay, getMonth, getYear } from "date-fns";
+import { getDate, getMonth, getYear } from "date-fns";
 import { RefObject, createRef } from "react";
 import { create } from "zustand";
 
@@ -34,25 +34,25 @@ export type CalendarDay = [
   month: number,
   date: number,
   day: string,
-  tasks: number,
+  isHighlighted: boolean,
+  isToday: boolean,
 ];
 
 export const useHorizontalCalendarStore = create<{
   month: number;
   year: number;
-  today: Date;
+  highlight: [number, number, number];
+  today: [number, number, number];
   // isScrolling: boolean;
   initialScroll: number;
-  highlight: CalendarDay;
   calendarDays?: CalendarDay[];
-  filledCalendarDays?: CalendarDay[];
   init: () => void;
   ref: RefObject<FlashList<CalendarDay[]>>;
 }>((set, get) => {
   const ref = createRef<FlashList<CalendarDay[]>>();
   const today = new Date();
   const date = getDate(today);
-  const day = daysOfWeek[getDay(today)];
+  // const day = daysOfWeek[getDay(today)];
   const year = getYear(today);
   const month = getMonth(today);
   const initialScroll = date;
@@ -62,18 +62,20 @@ export const useHorizontalCalendarStore = create<{
     ref,
     year,
     month,
-    highlight: [year, month, date, day, 0],
-    today,
+    highlight: [year, month, date],
+    today: [year, month, date],
     initialScroll,
     calendarDays: undefined,
-    filledCalendarDays: undefined,
+
     init: () => {
       const { year, month } = get();
-      computeCalendar(year, month).then((data) => {
-        set({
-          calendarDays: JSON.parse(data),
-        });
-      });
+      computeCalendar(year, month, year, month, date, year, month, date).then(
+        (data) => {
+          set({
+            calendarDays: JSON.parse(data),
+          });
+        }
+      );
     },
   };
 });
