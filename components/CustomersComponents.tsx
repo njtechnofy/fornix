@@ -8,28 +8,35 @@ import { useRouter } from "expo-router";
 import { useCallback, useDeferredValue } from "react";
 import { ListItem } from "tamagui";
 import { CustomSuspense } from "./loading/CustomSuspense";
-import { Loading } from "./loading/Loading";
 
 export const useShowAllCustomers = () => {
   const mapRef = useMapStore((state) => state.ref);
 
-  return (customers: CustomerModel[]) =>
-    mapRef.current?.fitToCoordinates(
-      customers.map((c) => ({
-        latitude: c.latitude,
-        longitude: c.longitude,
-      })),
-      {
-        animated: true,
-        edgePadding: {
-          left: 20,
-          right: 20,
-          bottom: 20,
-          top: 20,
-        },
-      }
+  return (customers: CustomerModel[]) => {
+    const geoTaggedCustomers = customers.reduce(
+      (acc, curr) => {
+        if (curr.latitude && curr.longitude) {
+          acc.push({
+            latitude: curr.latitude,
+            longitude: curr.longitude,
+          });
+        }
+        return acc;
+      },
+      [] as { latitude: number; longitude: number }[]
     );
+    mapRef.current?.fitToCoordinates(geoTaggedCustomers, {
+      animated: true,
+      edgePadding: {
+        left: 20,
+        right: 20,
+        bottom: 20,
+        top: 20,
+      },
+    });
+  };
 };
+
 export function CustomerList({
   cs,
 }: // onSubmit
@@ -83,10 +90,6 @@ export function CustomerList({
 
 export function CustomerSearch({ ignoreFilter }: { ignoreFilter?: boolean }) {
   const { customers } = useCustomers({ ignoreFilter: ignoreFilter ?? true });
-
-  if (!customers) {
-    return <Loading message="Loading customers" />;
-  }
 
   return (
     <CustomSuspense

@@ -12,7 +12,7 @@ export default function Products() {
   const { products } = useProducts({});
 
   const renderItem = ({ item }: { item: ProductModel }) => (
-    <Link asChild href={`/(app)/_products/${item.id}`}>
+    <Link asChild href={`/_products/${item.id}`}>
       <XStack
         height={90}
         borderRadius={20}

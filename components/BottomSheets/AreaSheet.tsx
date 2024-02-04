@@ -3,6 +3,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Check } from "@tamagui/lucide-icons";
 import { StyleSheet } from "react-native";
 import { H6, View, XStack } from "tamagui";
+import { CustomSuspense } from "../loading/CustomSuspense";
 
 const ITEM_SIZE = 80;
 
@@ -76,9 +77,16 @@ export function AreaSheet() {
 
   return (
     <BottomSheetScrollView style={styles.bottomSheet}>
-      {areas.map((item) => (
-        <Selection item={item} selected={selected} key={item.id} />
-      ))}
+      <CustomSuspense
+        data={areas}
+        component={(areas) => (
+          <>
+            {areas.map((item) => (
+              <Selection item={item} selected={selected} key={item.id} />
+            ))}
+          </>
+        )}
+      />
 
       {/* <CustomSuspense
         data={areas}

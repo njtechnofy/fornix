@@ -4,8 +4,10 @@ import { CustomSuspense } from "@/components/loading/CustomSuspense";
 import { TaskModel } from "@/db/models_and_schemas/Tasks";
 import { useTasks } from "@/hooks/useTasks";
 import { FlashList } from "@shopify/flash-list";
-import { Plus, Trash2 } from "@tamagui/lucide-icons";
-import { Button, H6, Paragraph, YStack } from "tamagui";
+import { Trash2 } from "@tamagui/lucide-icons";
+import { Slot, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { H6, Paragraph, YStack } from "tamagui";
 
 const TASK_HEIGHT = 100;
 
@@ -40,16 +42,17 @@ const RenderTask = ({ item }: { item: TaskModel }) => {
 
 export default function Tasks() {
   const tasks = useTasks({ forCalendar: false });
-
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
   return (
-    <YStack position="relative" fullscreen paddingTop="$13">
-      <HorizontalCalendar />
-      <YStack flex={1}>
-        <CustomSuspense
-          data={tasks}
-          name="tasks"
-          component={(_tasks) => {
-            return (
+    <>
+      <CustomSuspense
+        name="Tasks"
+        data={tasks}
+        component={(tasks) => (
+          <YStack position="relative" fullscreen paddingTop={insets.top + 50}>
+            <HorizontalCalendar />
+            <YStack flex={1}>
               <FlashList
                 contentContainerStyle={{
                   paddingHorizontal: 5,
@@ -57,24 +60,14 @@ export default function Tasks() {
                 }}
                 renderItem={RenderTask}
                 estimatedItemSize={TASK_HEIGHT}
-                data={_tasks}
+                data={tasks}
                 keyExtractor={(item) => item.id}
               />
-            );
-          }}
-        />
-      </YStack>
-      <Button
-        borderRadius={100}
-        height="$5"
-        width="$5"
-        position="absolute"
-        bottom="$12"
-        right="$2"
-        elevate
-      >
-        <Plus />
-      </Button>
-    </YStack>
+            </YStack>
+          </YStack>
+        )}
+      />
+      <Slot />
+    </>
   );
 }

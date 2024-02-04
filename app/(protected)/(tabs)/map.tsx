@@ -1,5 +1,5 @@
-import { SearchSheet } from "@/components/BottomSheets/SearchSheet";
 import { useShowAllCustomers } from "@/components/CustomersComponents";
+import { SearchSheet } from "@/components/bottomsheets/SearchSheet";
 import { CustomSuspense } from "@/components/loading/CustomSuspense";
 import { CustomerModel } from "@/db/models_and_schemas/Customer";
 import { moveCustomer } from "@/db/seed";
@@ -371,9 +371,11 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
             height: height * 0.4,
           }}
         >
-          <YStack position="relative" flex={1}>
-            <SearchSheet choice="CUSTOMER" />
-          </YStack>
+          {isSearching ? (
+            <YStack position="relative" flex={1}>
+              <SearchSheet choice="CUSTOMER" />
+            </YStack>
+          ) : null}
         </BottomSheetModal>
       </>
     ),

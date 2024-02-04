@@ -1,10 +1,9 @@
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { Redirect, Tabs, useRouter } from "expo-router";
 
-import { AreaSheet } from "@/components/BottomSheets/AreaSheet";
-import { GeofenceSheet } from "@/components/BottomSheets/GeofenceSheet";
-import { SearchSheet } from "@/components/BottomSheets/SearchSheet";
-import { Loading } from "@/components/loading/Loading";
+import { AreaSheet } from "@/components/bottomsheets/AreaSheet";
+import { GeofenceSheet } from "@/components/bottomsheets/GeofenceSheet";
+import { SearchSheet } from "@/components/bottomsheets/SearchSheet";
 import { toggleAreaSheet, useAreaStore } from "@/hooks/useArea";
 import { useGeofence } from "@/hooks/useGeofence";
 import {
@@ -41,14 +40,14 @@ export const CustomHeader = (props: any) => {
     <LinearGradient
       colors={
         isMap
-          ? ["rgba(0,0,0,0.8)", "transparent"]
+          ? ["rgba(0,0,0,0.6)", "transparent"]
           : ["transparent", "transparent"]
       }
     >
       <XStack
         paddingTop={insets.top ?? 40}
         paddingHorizontal="$2"
-        paddingBottom={isMap ? "$8" : "$2"}
+        paddingBottom={isMap ? "$6" : "$2"}
         backgroundColor="transparent"
         {...props}
       >
@@ -245,7 +244,7 @@ const BottomSheetContainer = () => {
         backgroundColor: theme.background.val,
       }}
     >
-      <YStack flex={1}>{isOpen ? <InsideSheet /> : <Loading />}</YStack>
+      <YStack flex={1}>{isOpen ? <InsideSheet /> : null}</YStack>
     </BottomSheet>
   );
 };

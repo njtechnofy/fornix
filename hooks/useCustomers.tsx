@@ -1,9 +1,11 @@
 import { COLLECTIONS } from "@/db/db_utils";
 import { CustomerModel } from "@/db/models_and_schemas/Customer";
+import { PrincipalModel } from "@/db/models_and_schemas/Principal";
 import { Q } from "@nozbe/watermelondb";
 import { useDatabase } from "@nozbe/watermelondb/hooks";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { Subscription } from "rxjs";
 import { useAreaStore } from "./useArea";
 
 export type CustomerSelector = {
@@ -150,6 +152,30 @@ LIMIT 1;`;
   return { ...bestCustomer, type };
 };
 
-export const useCustomer = () => {
-  const [customer, setCustomer] = useState();
+export const useCustomer = (id: string) => {
+  const [customer, setCustomer] = useState<CustomerModel>();
+  const [principals, setPrincipals] = useState<PrincipalModel[]>();
+
+  const database = useDatabase();
+  let query = database
+    .get<CustomerModel>(COLLECTIONS.CUSTOMERS)
+    .findAndObserve(id);
+
+  useEffect(() => {
+    const subscription = query.subscribe((customer) => {
+      setCustomer(customer);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+  useEffect(() => {
+    let subscription: Subscription;
+    if (customer) {
+      subscription = customer.principals.observe().subscribe(setPrincipals);
+    }
+  }, [customer]);
+
+  return {
+    customer,
+    principals,
+  };
 };

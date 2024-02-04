@@ -1,4 +1,4 @@
-import { Provider } from "@/components/Providers";
+import { Provider } from "@/components/providers";
 import { updateLocation } from "@/store";
 import { NetInfoSubscription } from "@react-native-community/netinfo";
 import "react-native-reanimated";

@@ -84,9 +84,7 @@ export async function fetchTiles(
 
   const fileStatuses = await Promise.all(tile_downloads);
 
-
-    fileStatuses.forEach(file => {
-      console.log('Downloaded, file.uri)
-    })
-    
+  fileStatuses.forEach((file) => {
+    console.log("Downloaded", file.uri);
+  });
 }

@@ -11,6 +11,7 @@ import {
 import { COLLECTIONS, nameWithDateSchemaColumns } from "../db_utils";
 import { AreaModel } from "./Area";
 import { OrderModel } from "./Order";
+import { PrincipalModel } from "./Principal";
 import { TaskModel } from "./Tasks";
 
 export class CustomerModel extends Model {
@@ -42,7 +43,7 @@ export class CustomerModel extends Model {
 
   @lazy
   principals = this.collections
-    .get(COLLECTIONS.PRINCIPALS)
+    .get<PrincipalModel>(COLLECTIONS.PRINCIPALS)
     .query(Q.on(COLLECTIONS.CUSTOMER_PRINCIPALS, "customer_id", this.id));
 
   @field("name") name!: string;

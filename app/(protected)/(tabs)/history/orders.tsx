@@ -1,4 +1,4 @@
-import { Loading } from "@/components/loading/Loading";
+import { CustomSuspense } from "@/components/loading/CustomSuspense";
 import { OrderModel } from "@/db/models_and_schemas/Order";
 import { useOrders } from "@/hooks/useOrders";
 import { FlashList } from "@shopify/flash-list";
@@ -39,7 +39,7 @@ const ORDER_WIDGET_HEIGHT = 90;
 //   </YStack>
 // );
 const renderItem = ({ item }: { item: OrderModel }) => (
-  <Link asChild href={`/(app)/_orders/${item.id}`}>
+  <Link asChild href={`/_orders/${item.id}/`}>
     <XStack
       height={ORDER_WIDGET_HEIGHT}
       paddingHorizontal="$4"
@@ -62,23 +62,32 @@ const renderItem = ({ item }: { item: OrderModel }) => (
 export default function Orders() {
   const { orders } = useOrders({});
 
-  if (!orders) {
-    return <Loading />;
-  }
   return (
-    <YStack position="relative" flex={1} paddingBottom="$12">
-      <YStack position="absolute" top="$0" left="$0" height="100%" width="100%">
-        <FlashList
-          automaticallyAdjustKeyboardInsets
-          contentContainerStyle={{
-            padding: 5,
-          }}
-          data={orders}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          estimatedItemSize={ORDER_WIDGET_HEIGHT}
-        />
-      </YStack>
-    </YStack>
+    <CustomSuspense
+      name="orders"
+      data={orders}
+      component={(orders) => (
+        <YStack position="relative" flex={1} paddingBottom="$12">
+          <YStack
+            position="absolute"
+            top="$0"
+            left="$0"
+            height="100%"
+            width="100%"
+          >
+            <FlashList
+              automaticallyAdjustKeyboardInsets
+              contentContainerStyle={{
+                padding: 5,
+              }}
+              data={orders}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              estimatedItemSize={ORDER_WIDGET_HEIGHT}
+            />
+          </YStack>
+        </YStack>
+      )}
+    />
   );
 }

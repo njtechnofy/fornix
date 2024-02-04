@@ -37552,7 +37552,7 @@ var useSheetOpenState = /* @__PURE__ */ __name((props) => {
 var import_core8 = require("@tamagui/core");
 var import_react21 = __toESM(require("react"));
 function useSheetProviderProps(props, state, options = {}) {
-  const contentRef = import_react21.default.useRef(null), [frameSize, setFrameSize] = (0, import_react21.useState)(0), [maxContentSize, setMaxContentSize] = (0, import_react21.useState)(0), snapPointsMode = props.snapPointsMode ?? "percent", snapPointsProp = props.snapPoints ?? (snapPointsMode === "percent" ? [80] : snapPointsMode === "constant" ? [256] : ["fit"]), hasFit = snapPointsProp[0] === "fit", snapPoints = (0, import_react21.useMemo)(
+  const handleRef = import_react21.default.useRef(null), contentRef = import_react21.default.useRef(null), [frameSize, setFrameSize] = (0, import_react21.useState)(0), [maxContentSize, setMaxContentSize] = (0, import_react21.useState)(0), snapPointsMode = props.snapPointsMode ?? "percent", snapPointsProp = props.snapPoints ?? (snapPointsMode === "percent" ? [80] : snapPointsMode === "constant" ? [256] : ["fit"]), hasFit = snapPointsProp[0] === "fit", snapPoints = (0, import_react21.useMemo)(
     () => props.dismissOnSnapToBottom ? [...snapPointsProp, 0] : snapPointsProp,
     [JSON.stringify(snapPointsProp), props.dismissOnSnapToBottom]
   ), [position_, setPositionImmediate] = useControllableState({
@@ -37618,6 +37618,7 @@ function useSheetProviderProps(props, state, options = {}) {
     setOpen: state.setOpen,
     hidden: !!state.isHidden,
     contentRef,
+    handleRef,
     frameSize,
     setFrameSize,
     dismissOnOverlayPress: props.dismissOnOverlayPress ?? true,
@@ -37758,7 +37759,9 @@ var SheetImplementationCustom = (0, import_core9.themeable)(
         });
       }, "finish");
       let previouslyScrolling = false;
-      const onMoveShouldSet = /* @__PURE__ */ __name((_e, { dy }) => {
+      const onMoveShouldSet = /* @__PURE__ */ __name((e, { dy }) => {
+        if (e.target === providerProps.handleRef.current)
+          return true;
         const isScrolled = scrollBridge.y !== 0, isDraggingUp = dy < 0, isNearTop = scrollBridge.paneY - 5 <= scrollBridge.paneMinY;
         return isScrolled ? (previouslyScrolling = true, false) : isNearTop && !isScrolled && isDraggingUp && !isWeb ? false : Math.abs(dy) > 5;
       }, "onMoveShouldSet"), grant = /* @__PURE__ */ __name(() => {
@@ -37995,14 +37998,15 @@ var useSheetOffscreenSize = /* @__PURE__ */ __name(({
 // node_modules/@tamagui/sheet/dist/esm/createSheet.js
 var import_jsx_runtime12 = require("react/jsx-runtime");
 function createSheet({ Handle: Handle2, Frame: Frame2, Overlay: Overlay2 }) {
-  const SheetHandle = Handle2.extractable(
-    ({ __scopeSheet, ...props }) => {
-      const context = useSheetContext(SHEET_HANDLE_NAME, __scopeSheet);
+  const SheetHandle = Handle2.styleable(
+    ({ __scopeSheet, ...props }, forwardedRef) => {
+      const context = useSheetContext(SHEET_HANDLE_NAME, __scopeSheet), composedRef = useComposedRefs(context.handleRef, forwardedRef);
       return context.onlyShowFrame ? null : (
         // @ts-ignore
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           Handle2,
           {
+            ref: composedRef,
             onPress: () => {
               const max2 = context.snapPoints.length + (context.dismissOnSnapToBottom ? -1 : 0), nextPos = (context.position + 1) % max2;
               context.setPosition(nextPos);

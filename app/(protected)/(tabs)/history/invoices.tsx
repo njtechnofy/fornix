@@ -1,4 +1,4 @@
-import { Loading } from "@/components/loading/Loading";
+import { CustomSuspense } from "@/components/loading/CustomSuspense";
 import { InvoiceModel } from "@/db/models_and_schemas/Invoice";
 import { useInvoices } from "@/hooks/useInvoices";
 import { moneyFormatter } from "@/utils/tools";
@@ -59,25 +59,34 @@ const renderItem = ({ item }: { item: InvoiceModel }) => (
 );
 
 export default function Invoices() {
-  const { invoices } = useInvoices({ date: true });
+  const { invoices } = useInvoices({});
 
-  if (!invoices) {
-    return <Loading />;
-  }
   return (
-    <YStack position="relative" flex={1} paddingBottom="$12">
-      <YStack position="absolute" top="$0" left="$0" height="100%" width="100%">
-        <FlashList
-          automaticallyAdjustKeyboardInsets
-          contentContainerStyle={{
-            padding: 5,
-          }}
-          data={invoices}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          estimatedItemSize={120}
-        />
-      </YStack>
-    </YStack>
+    <CustomSuspense
+      name="invoices"
+      data={invoices}
+      component={(invoices) => (
+        <YStack position="relative" flex={1} paddingBottom="$12">
+          <YStack
+            position="absolute"
+            top="$0"
+            left="$0"
+            height="100%"
+            width="100%"
+          >
+            <FlashList
+              automaticallyAdjustKeyboardInsets
+              contentContainerStyle={{
+                padding: 5,
+              }}
+              data={invoices}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              estimatedItemSize={120}
+            />
+          </YStack>
+        </YStack>
+      )}
+    />
   );
 }

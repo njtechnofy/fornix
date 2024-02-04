@@ -195,6 +195,7 @@ export async function seed(
         if (!customer.latitude || !customer.longitude) {
           tasksToCreate.push(
             Tasks.create((t) => {
+              t.approved = true;
               t.taskName = "geotag";
               t.customer.id = customer.id;
               t.customerName = customer.name;
@@ -210,6 +211,7 @@ export async function seed(
         } else if (customer.allDelivered && customer.allDelivered) {
           tasksToCreate.push(
             Tasks.create((t) => {
+              t.approved = true;
               t.taskName = "geotag";
               t.customer.id = customer.id;
               t.customerName = customer.name;
@@ -336,6 +338,7 @@ export async function seed(
         } else {
           tasksToCreate.push(
             Tasks.create((t) => {
+              t.approved = true;
               t.taskName = "collect";
               t.customer.id = order.customer.id;
               t.customerName = order.customerName;

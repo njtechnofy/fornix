@@ -146,7 +146,7 @@ export function HorizontalCalendar() {
   const tasks = useTasks({ forCalendar: true });
 
   useEffect(() => {
-    if ((calendarDays.length, tasks?.length)) {
+    if ((calendarDays?.length, tasks?.length)) {
       console.log("running effect");
       fillCalendar(JSON.stringify(tasks), JSON.stringify(calendarDays)).then(
         (tasksJSON: any) => {

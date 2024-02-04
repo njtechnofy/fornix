@@ -25,6 +25,7 @@ export class TaskModel extends Model {
 
   @field("task_name") taskName!: TaskName;
   @field("customer_name") customerName!: string;
+  @field("approved") approved!: boolean;
 
   @date("expected_at") expectedAt!: number;
 
@@ -43,6 +44,7 @@ export const taskSchema = tableSchema({
   name: COLLECTIONS.TASKS,
   columns: [
     { name: "customer_id", type: "string" },
+    { name: "approved", type: "boolean" },
     { name: "customer_name", type: "string" },
     { name: "task_name", type: "string" },
     { name: "expected_at", type: "number" },
