@@ -4,14 +4,9 @@ import { Redirect, Tabs, useRouter } from "expo-router";
 import { AreaSheet } from "@/components/bottomsheets/AreaSheet";
 import { GeofenceSheet } from "@/components/bottomsheets/GeofenceSheet";
 import { SearchSheet } from "@/components/bottomsheets/SearchSheet";
-import { toggleAreaSheet, useAreaStore } from "@/hooks/useArea";
+import { useAreaStore } from "@/hooks/useArea";
 import { useGeofence } from "@/hooks/useGeofence";
-import {
-  toggleGeofenceSheet,
-  toggleSearchSheet,
-  useSheetStore,
-  useUserStore,
-} from "@/store";
+import { toggleSheet, useSheetStore, useUserStore } from "@/store";
 import {
   CalendarSearch,
   ChevronDown,
@@ -30,8 +25,9 @@ import { Button, SizableText, XStack, YStack, useTheme } from "tamagui";
 
 export const CustomHeader = (props: any) => {
   const insets = useSafeAreaInsets();
-  const selectedArea = useAreaStore((state) => state.area);
   const router = useRouter();
+
+  const selected = useAreaStore((state) => state.area);
 
   const isMap = props.routeName === "map";
   const color = isMap ? "white" : "$gray12";
@@ -53,7 +49,7 @@ export const CustomHeader = (props: any) => {
       >
         <Pressable
           onPress={() => {
-            toggleAreaSheet(true);
+            toggleSheet("area");
           }}
         >
           <XStack
@@ -70,7 +66,7 @@ export const CustomHeader = (props: any) => {
               color="white"
               numberOfLines={1}
             >
-              {selectedArea ? selectedArea.name : "All Areas"}
+              {selected ? selected.name : "All Areas"}
             </SizableText>
             <ChevronDown color="white" size="$1" />
           </XStack>
@@ -79,7 +75,7 @@ export const CustomHeader = (props: any) => {
           <Button
             variant="outlined"
             onPress={() => {
-              toggleSearchSheet(true);
+              toggleSheet("area");
             }}
             flex="unset"
             width="$3"
@@ -154,7 +150,7 @@ export default function TabLayout() {
                 borderRadius={100}
                 elevation="$0.25"
                 onPress={() => {
-                  toggleGeofenceSheet(true);
+                  toggleSheet("geofence");
                 }}
               >
                 <MapPin color={isOnSite ? "white" : "$gray12"} size={size} />

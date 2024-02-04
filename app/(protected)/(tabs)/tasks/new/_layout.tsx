@@ -62,7 +62,7 @@ export default function Layout() {
         <Stack.Screen
           name="index"
           options={{
-            title: "Assign New Task",
+            title: "New Task",
           }}
         />
       </Stack>

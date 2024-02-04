@@ -1,4 +1,4 @@
-import { closeSheet, updateSearchQuery, useSearchStore } from "@/store";
+import { toggleSheet, updateSearchQuery, useSearchStore } from "@/store";
 import { X } from "@tamagui/lucide-icons";
 import { useState } from "react";
 import { KeyboardAvoidingView } from "react-native";
@@ -53,7 +53,7 @@ export function SearchSheet({
         ) : (
           <H5>{choice} SEARCH</H5>
         )}
-        <Button variant="outlined" onPress={() => closeSheet()}>
+        <Button variant="outlined" onPress={() => toggleSheet(null)}>
           <X size="$2" />
         </Button>
       </XStack>

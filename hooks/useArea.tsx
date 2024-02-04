@@ -1,6 +1,6 @@
 import { COLLECTIONS } from "@/db/db_utils";
 import { AreaModel } from "@/db/models_and_schemas/Area";
-import { closeSheet, useSheetStore } from "@/store";
+import { toggleSheet } from "@/store";
 import { useDatabase } from "@nozbe/watermelondb/hooks";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -22,23 +22,14 @@ export const useAreaStore = create<{ area: AreaType; areas: AreaType[] }>(
     areas: [defaultArea],
   })
 );
-export const toggleAreaSheet = (areaSheet: boolean) => {
-  if (areaSheet) {
-    useSheetStore.setState({
-      type: "area",
-    });
-    useSheetStore.getState().ref.current?.snapToIndex(0);
-  } else {
-    closeSheet();
-  }
-};
+
 export const updateAreas = (areas: AreaType[]) =>
   useAreaStore.setState({
     areas: [defaultArea, ...areas],
   });
 
 export const selectArea = (area: { id: string; name: string }) => {
-  closeSheet();
+  toggleSheet("area");
 
   useAreaStore.setState((state) => ({
     area: {

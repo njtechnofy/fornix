@@ -5,7 +5,7 @@ import { CustomerModel } from "@/db/models_and_schemas/Customer";
 import { moveCustomer } from "@/db/seed";
 import { useCustomers } from "@/hooks/useCustomers";
 import {
-  toggleMapSheet,
+  toggleSheet,
   updateSearchQuery,
   useMapStore,
   useSheetStore,
@@ -158,6 +158,7 @@ const AnimatedMap = Animated.createAnimatedComponent(MapView);
 
 function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
   const { height, width } = Dimensions.get("screen");
+
   const position = useSharedValue(height);
   const animatedProps = useAnimatedProps(() => {
     return {
@@ -252,6 +253,17 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
     [mapRef]
   );
 
+  const showCustomer = useCallback(
+    (item: CustomerModel) => {
+      if (item.latitude && item.longitude) {
+        showAllCustomers([item]);
+      } else {
+        router.push(`/_customers/${item.id}`);
+      }
+    },
+    [customers, showAllCustomers]
+  );
+
   return useMemo(
     () => (
       <>
@@ -304,7 +316,7 @@ function CustomerMapComponent({ customers }: { customers: CustomerModel[] }) {
                   if (isSearching) {
                     updateSearchQuery("");
                   }
-                  toggleMapSheet(true);
+                  toggleSheet("map", showCustomer);
                 }}
               >
                 <Search color="white" />

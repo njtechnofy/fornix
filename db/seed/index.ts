@@ -118,16 +118,14 @@ export async function seed(
                 : `RC:${faker.company.name()}`;
 
               c.name = name;
+              if (isNabua) {
+                c.latitude = 13.40905;
+                c.longitude = 123.3731;
+              }
 
               if (Math.random() > 0.5) {
-                c.latitude =
-                  index === 0 && k === 0
-                    ? 13.40905
-                    : 13.40905 + Math.random() * 0.06 * plusOrMinus();
-                c.longitude =
-                  index === 0 && k === 0
-                    ? 123.3731
-                    : 123.3731 + Math.random() * 0.06 * plusOrMinus();
+                c.latitude = 13.40905 + Math.random() * 0.06 * plusOrMinus();
+                c.longitude = 123.3731 + Math.random() * 0.06 * plusOrMinus();
               }
 
               c.area.id = c.id;
@@ -270,7 +268,6 @@ export async function seed(
         }
       });
 
-      console.log(tasksToCreate);
       console.log("finished iteration of customers");
 
       const orders = await Promise.all(ordersPromises);

@@ -1,11 +1,10 @@
 import { CustomerModel } from "@/db/models_and_schemas/Customer";
 import { useCustomers } from "@/hooks/useCustomers";
-import { useMapStore, useSearchStore, useSheetStore } from "@/store";
+import { useMapStore, useSearchStore } from "@/store";
 import { likeSearch } from "@/utils/tools";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
-import { useRouter } from "expo-router";
-import { useCallback, useDeferredValue } from "react";
+import { useDeferredValue } from "react";
 import { ListItem } from "tamagui";
 import { CustomSuspense } from "./loading/CustomSuspense";
 
@@ -43,23 +42,9 @@ export function CustomerList({
 {
   cs: CustomerModel[];
 }) {
-  const type = useSheetStore((state) => state.type);
   const query = useSearchStore((state) => state.query);
-
-  const router = useRouter();
+  const clickHandler = useSearchStore((state) => state.clickHandler);
   const deferredQuery = useDeferredValue(query);
-  const showAllCustomers = useShowAllCustomers();
-
-  const handlePress = useCallback(
-    (item: CustomerModel) => {
-      if (type === "map") {
-        showAllCustomers([item]);
-      } else {
-        router.push(`/_customers/${item.id}`);
-      }
-    },
-    [type]
-  );
 
   const renderItem = ({ item }: { item: CustomerModel }) => (
     <ListItem
@@ -69,7 +54,11 @@ export function CustomerList({
       hoverTheme
       pressTheme
       title={item.name}
-      onPress={() => handlePress(item)}
+      onPress={() => {
+        if (clickHandler) {
+          clickHandler(item);
+        }
+      }}
     />
   );
 

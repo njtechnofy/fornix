@@ -84,7 +84,7 @@ export function useCustomers({
       return () => {
         subscription.unsubscribe();
       };
-    }, [])
+    }, [area])
   );
 
   return { customers, count };

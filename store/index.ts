@@ -94,15 +94,10 @@ export const useNetworkStore = create<NetInfoState>(() => ({
   details: null,
 }));
 
-type ZoomType = {
-  latitude: number;
-  longitude: number;
-  latitudeDelta?: number;
-  longitudeDelta?: number;
-};
+type SheetType = null | "area" | "customer" | "geofence" | "map";
 
 export const useSheetStore = create<{
-  type: null | "area" | "customer" | "geofence" | "map";
+  type: SheetType;
   ref: React.RefObject<BottomSheet>;
   bottomRef: React.RefObject<BottomSheetModal>;
 }>(() => ({
@@ -111,73 +106,54 @@ export const useSheetStore = create<{
   bottomRef: createRef<BottomSheetModal>(),
 }));
 
-export const closeSheet = () => {
-  useSheetStore.setState({
-    type: null,
-  });
-  useSheetStore.getState().ref?.current?.close();
-  useSheetStore.getState().bottomRef?.current?.close();
-};
 export const useMapStore = create<{
   ref: React.RefObject<MapView>;
 }>(() => ({
   ref: createRef<MapView>(),
 }));
 
-export const useSearchStore = create<{ query: string }>(() => ({
+export const useSearchStore = create<{
+  query: string;
+  clickHandler?: (item: any) => any;
+}>(() => ({
   query: "",
+  clickHandler: undefined,
 }));
+
+export const toggleSheet = (
+  type: SheetType,
+  clickHandler?: (item: any) => any
+) => {
+  if (type) {
+    if (clickHandler) {
+    }
+    useSearchStore.setState({
+      clickHandler,
+    });
+    if (type === "map") {
+      useSheetStore.setState({
+        type,
+      });
+
+      useSheetStore.getState().bottomRef.current?.present();
+    } else {
+      useSheetStore.getState().bottomRef.current?.close();
+
+      useSheetStore.setState({
+        type,
+      });
+      useSheetStore.getState().ref.current?.snapToIndex(0);
+    }
+  } else {
+    useSheetStore.getState().bottomRef.current?.close();
+    useSheetStore.getState().ref.current?.close();
+  }
+};
 
 export const updateSearchQuery = (query: string) =>
   useSearchStore.setState({
     query,
   });
-export const uselessStore = create<{ ctr: number }>(() => ({
-  ctr: 0,
-}));
-
-export const toggleTaskSheet = (taskSheet: boolean) => {
-  if (taskSheet) {
-    useSheetStore.setState({
-      type: "customer",
-    });
-    useSheetStore.getState().ref.current?.snapToIndex(0);
-  } else {
-    closeSheet();
-  }
-};
-export const toggleMapSheet = (taskSheet: boolean) => {
-  if (taskSheet) {
-    useSheetStore.setState({
-      type: "map",
-    });
-    useSheetStore.getState().bottomRef.current?.present();
-  } else {
-    closeSheet();
-  }
-};
-
-export const toggleSearchSheet = (searchSheet: boolean) => {
-  if (searchSheet) {
-    useSheetStore.setState({
-      type: "customer",
-    });
-    useSheetStore.getState().ref.current?.snapToIndex(0);
-  } else {
-    closeSheet();
-  }
-};
-
-export const toggleGeofenceSheet = (geofence: boolean) => {
-  if (geofence) {
-    useSheetStore.setState({
-      type: "geofence",
-    });
-    useSheetStore.getState().ref.current?.snapToIndex(0);
-  } else {
-    closeSheet();
-  }
-};
 
 export const updateNetworkInfo = (networkState: NetInfoState) =>
   useNetworkStore.setState(networkState);

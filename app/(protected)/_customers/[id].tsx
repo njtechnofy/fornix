@@ -1,6 +1,5 @@
 import { CustomSuspense } from "@/components/loading/CustomSuspense";
 import { useCustomer } from "@/hooks/useCustomers";
-import { useDatabase } from "@nozbe/watermelondb/react";
 
 import { Phone } from "@tamagui/lucide-icons";
 import { useLocalSearchParams } from "expo-router";
@@ -8,7 +7,6 @@ import { Linking } from "react-native";
 import { Button, Image, Paragraph, XStack, YStack } from "tamagui";
 
 export default function Customer() {
-  const database = useDatabase();
   const { id } = useLocalSearchParams<{ id: string }>();
   if (!id) {
     throw new Error("");

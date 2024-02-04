@@ -1,5 +1,4 @@
 import { useGeofence } from "@/hooks/useGeofence";
-
 import { toggleSheet } from "@/store";
 import { Button, H3, Text, YStack } from "tamagui";
 import { CustomSuspense } from "../loading/CustomSuspense";
@@ -9,7 +8,7 @@ export function GeofenceSheet() {
 
   return (
     <CustomSuspense
-      name="Customers near me"
+      name="Customers near you"
       data={customersInSite}
       component={(customersInSite) => (
         <YStack flex={1} justifyContent="center" alignItems="center">

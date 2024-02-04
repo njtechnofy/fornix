@@ -1,9 +1,8 @@
-import { Paragraph, YStack } from "tamagui";
+import { useHorizontalCalendarStore } from "@/store/useHorizontalDateStore";
+import { YStack } from "tamagui";
 
 export default function NewTask() {
-  return (
-    <YStack flex={1}>
-      <Paragraph>wow</Paragraph>
-    </YStack>
-  );
+  const highlight = useHorizontalCalendarStore((state) => state.year);
+
+  return <YStack flex={1}></YStack>;
 }
