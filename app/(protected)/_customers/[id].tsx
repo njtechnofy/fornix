@@ -77,7 +77,7 @@ export default function Customer() {
             </YStack>
             {/* <Text>{JSON.stringify(principals, null, 2)}</Text> */}
 
-            <XStack space="$1" padding="$1">
+            <XStack padding="$1">
               <Button backgroundColor="$green9" color="white" flex={1}>
                 New Order
               </Button>

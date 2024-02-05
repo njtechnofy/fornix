@@ -5,6 +5,7 @@ import {
   field,
   immutableRelation,
   readonly,
+  writer,
 } from "@nozbe/watermelondb/decorators";
 import { COLLECTIONS, dateSchemaColumns } from "../db_utils";
 import { CustomerModel } from "./Customer";
@@ -23,6 +24,14 @@ export class TaskModel extends Model {
   @immutableRelation(COLLECTIONS.CUSTOMERS, "customer_id")
   customer!: Relation<CustomerModel>;
 
+  @writer
+  async softDelete() {
+    this.update((task) => {
+      task.isDeleted = true;
+    });
+  }
+
+  @field("is_deleted") isDeleted!: boolean;
   @field("task_name") taskName!: TaskName;
   @field("customer_name") customerName!: string;
   @field("approved") approved!: boolean;
@@ -45,6 +54,7 @@ export const taskSchema = tableSchema({
   columns: [
     { name: "customer_id", type: "string" },
     { name: "approved", type: "boolean" },
+    { name: "is_deleted", type: "boolean" },
     { name: "customer_name", type: "string" },
     { name: "task_name", type: "string" },
     { name: "expected_at", type: "number" },

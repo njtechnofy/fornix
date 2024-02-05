@@ -4,8 +4,8 @@ import { Avatar, Button, H3, H4, XStack, YStack } from "tamagui";
 
 export default function ProfileScreen() {
   return (
-    <SafeStack padding="$4" space="$2" justifyContent="center">
-      <XStack alignItems="center" justifyContent="center" space="$6">
+    <SafeStack padding="$4" justifyContent="center">
+      <XStack alignItems="center" justifyContent="center">
         <Avatar circular size="$14" marginBottom="$2">
           <Avatar.Image
             accessibilityLabel="Cam"

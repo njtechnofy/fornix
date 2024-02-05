@@ -33,12 +33,11 @@ export default function Dashboard() {
     <YStack
       flex={1}
       backgroundColor="$gray1"
-      space="$4"
       paddingTop="$13"
       paddingHorizontal="$2"
       paddingBottom="$12"
     >
-      <XStack space="$2">
+      <XStack>
         <Stat name="Customers" filter="" count={totalCustomers} />
         <Stat filter="unpaid" name="Unpaid" count={unpaidCustomers} />
         <Stat
@@ -80,7 +79,6 @@ function Stat({
       borderRadius={20}
       justifyContent="center"
       alignItems="center"
-      space="$2"
       elevation="$1"
       backgroundColor={backgroundColor}
       onPress={() => {

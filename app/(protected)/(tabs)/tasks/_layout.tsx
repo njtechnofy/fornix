@@ -19,7 +19,7 @@ const RenderTask = ({ item }: { item: TaskModel }) => {
           text: <Trash2 color="white" />,
           color: "$red10",
           onPress: () => {
-            console.log("deleted");
+            item.softDelete();
           },
         },
       ]}
@@ -35,6 +35,7 @@ const RenderTask = ({ item }: { item: TaskModel }) => {
         <H6>{item.taskName}</H6>
         <Paragraph>{item.customerName}</Paragraph>
         <Paragraph>{new Date(item.expectedAt).toLocaleTimeString()}</Paragraph>
+        {item.isDeleted ? <Paragraph>DELETED</Paragraph> : null}
       </YStack>
     </SwipeableRow>
   );

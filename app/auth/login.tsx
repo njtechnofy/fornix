@@ -41,7 +41,7 @@ export default function Login() {
         )}
       </YStack>
 
-      <YStack space="$2.5" paddingHorizontal="$4">
+      <YStack paddingHorizontal="$4">
         <Button
           elevate
           borderWidth="$0.5"

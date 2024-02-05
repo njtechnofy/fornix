@@ -16,10 +16,11 @@ import { Button, H3, SizableText, View, XStack, YStack } from "tamagui";
 const DATE_SIZE = 64;
 
 type DateTuple = [number, number, number];
-
+//TODO ({item})=>RenderItem(item,highlight)
 const DateWidget = ({ item }: { item: CalendarDay }) => {
   const highlight = useHorizontalCalendarStore((state) => state.highlight);
   const today = useHorizontalCalendarStore((state) => state.today);
+
   // const tasks = useTasks({
   //   date: new Date(...(item.slice(0, -1) as [number, number, number])),
   // });
@@ -30,6 +31,7 @@ const DateWidget = ({ item }: { item: CalendarDay }) => {
     thisWidget,
     new Date(...(highlight.slice(0, -2) as DateTuple))
   );
+
   return (
     <XStack
       paddingVertical="$2"

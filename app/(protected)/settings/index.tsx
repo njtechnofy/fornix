@@ -13,8 +13,8 @@ export default function Settings() {
     return <Loading isAbsolute message="Seeding Random Procedural Data" />;
   }
   return (
-    <YStack backgroundColor="$gray1" flex={1} padding="$2" space="$2">
-      <YStack padding="$2" space="$2">
+    <YStack backgroundColor="$gray1" flex={1} padding="$2">
+      <YStack padding="$2">
         <H3>Database</H3>
 
         <Button

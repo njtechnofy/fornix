@@ -194,6 +194,7 @@ export async function seed(
           tasksToCreate.push(
             Tasks.create((t) => {
               t.approved = true;
+              t.isDeleted = false;
               t.taskName = "geotag";
               t.customer.id = customer.id;
               t.customerName = customer.name;
@@ -210,6 +211,7 @@ export async function seed(
           tasksToCreate.push(
             Tasks.create((t) => {
               t.approved = true;
+              t.isDeleted = false;
               t.taskName = "geotag";
               t.customer.id = customer.id;
               t.customerName = customer.name;
@@ -336,6 +338,7 @@ export async function seed(
           tasksToCreate.push(
             Tasks.create((t) => {
               t.approved = true;
+              t.isDeleted = false;
               t.taskName = "collect";
               t.customer.id = order.customer.id;
               t.customerName = order.customerName;

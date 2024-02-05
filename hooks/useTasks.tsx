@@ -24,7 +24,7 @@ export const useTasks = ({ forCalendar, type = "expected" }: TaskOptions) => {
   const database = useDatabase();
   let query = database.get<TaskModel>(COLLECTIONS.TASKS).query();
 
-  if (typeof forCalendar !== "undefined") {
+  if (typeof forCalendar !== "undefined" && calendarDays) {
     const date1 = new Date(
       ...((forCalendar ? calendarDays[0] : highlight).slice(0, -2) as [
         number,
@@ -48,21 +48,28 @@ export const useTasks = ({ forCalendar, type = "expected" }: TaskOptions) => {
       )
     );
   }
+  query = query.extend(Q.where("is_deleted", false));
   const dependency =
     typeof forCalendar === "undefined"
       ? 0
-      : forCalendar
+      : forCalendar && calendarDays
         ? calendarDays[0][1]
         : highlight;
+
   query = query.extend(Q.sortBy(`${type}_at`, "asc"));
   useFocusEffect(
     useCallback(() => {
       let subscription: Subscription;
 
       if (!forCalendar) {
-        subscription = query.observe().subscribe(setTasks);
+        subscription = query
+          .observeWithColumns(["is_deleted"])
+          .subscribe(setTasks);
       } else {
-        query.unsafeFetchRaw().then(setTasks);
+        query.observeWithColumns(["is_deleted"]).subscribe((data) => {
+          //@ts-ignore
+          setTasks(data.map((d) => d._raw));
+        });
       }
 
       return () => {
